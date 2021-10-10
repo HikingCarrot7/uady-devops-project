@@ -11,5 +11,5 @@ export class SiteRequest {
   state: string = '';
 
   @IsNumber({}, { message: 'El código debe ser numérico' })
-  code: string = '';  
+  code: number = 0;  
 }

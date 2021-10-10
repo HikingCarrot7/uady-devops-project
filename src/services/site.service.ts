@@ -29,5 +29,11 @@ export const SiteService = (siteRepository: SiteRepository) => {
     return await siteRepository.delete({ id: parsedId });
   };
 
-  return { getAllSites, getSiteById, createSite, deleteSiteById };
+  const updateSite = async (id: string, newSite: Site) => {
+    const result = await getSiteById(id);
+    const updatedSite = {...result[0], ...newSite};
+    return await siteRepository.save(updatedSite);
+  };
+
+  return { getAllSites, getSiteById, createSite, deleteSiteById, updateSite };
 };
