@@ -9,8 +9,7 @@ import { validationError } from './utils/validation';
 dotenv.config();
 
 createConnection().then(() => {
-  app.use('/api/v1', UserRouter().router);
-  app.use('/api/v1', SiteRouter().router);  
+  app.use('/api/v1', UserRouter().router, SiteRouter().router);
 
   app.use(validationError);
 });

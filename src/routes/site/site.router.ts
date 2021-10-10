@@ -67,11 +67,15 @@ export const SiteRouter = () => {
 
   const router = Router();
 
-  router.route('/sites').get(getAllSites);
-  router.route('/sites').post(validate(SiteRequest), createSite);
-  router.route('/sites/:id').get(getSiteById);
-  router.route('/sites/:id').delete(deleteSiteById);
-  router.route('/sites/:id').put(validate(SiteRequest), updateSite);
+  router
+    .route('/sites')
+      .get(getAllSites)
+      .post(validate(SiteRequest), createSite);
+  router
+    .route('/sites/:id')
+      .get(getSiteById)
+      .delete(deleteSiteById)
+      .put(validate(SiteRequest), updateSite);
 
   return { router };
 };

@@ -13,7 +13,7 @@ export const SiteService = (siteRepository: SiteRepository) => {
       return Promise.reject('ID inválido');
     }
 
-    return await siteRepository.find({ id: parsedId });
+    return await siteRepository.findOne({ id: parsedId });
   };
 
   const createSite = async (site: Site) => {
@@ -31,7 +31,7 @@ export const SiteService = (siteRepository: SiteRepository) => {
 
   const updateSite = async (id: string, newSite: Site) => {
     const result = await getSiteById(id);
-    const updatedSite = {...result[0], ...newSite};
+    const updatedSite = {...result, ...newSite};
     return await siteRepository.save(updatedSite);
   };
 
