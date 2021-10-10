@@ -27,4 +27,9 @@ export class FlightClass extends BaseEntity {
 
   @OneToMany((type) => FlightTicket, (ticket) => ticket.flightClass)
   tickets: FlightTicket[];
+
+  constructor(flightClass: Partial<FlightClass>) {
+    super();
+    Object.assign(this, flightClass);
+  }
 }
