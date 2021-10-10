@@ -31,4 +31,9 @@ export class Flight extends BaseEntity {
 
   @ManyToOne((type) => Site, (site) => site.asLandingFlights)
   landingSite: Site;
+
+  constructor(flight: Partial<Flight>) {
+    super();
+    Object.assign(this, flight);
+  }
 }
