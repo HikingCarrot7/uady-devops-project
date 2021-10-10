@@ -5,11 +5,11 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { FlightTicket } from './flight_ticket.entity';
-import { Site } from './site.entity';
+} from "typeorm";
+import { FlightTicket } from "./flight_ticket.entity";
+import { Site } from "./site.entity";
 
-@Entity({ name: 'flights' })
+@Entity({ name: "flights" })
 export class Flight extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,4 +31,9 @@ export class Flight extends BaseEntity {
 
   @ManyToOne((type) => Site, (site) => site.asLandingFlights)
   landingSite: Site;
+
+  constructor(flight: Partial<Flight>) {
+    super();
+    Object.assign(this, flight);
+  }
 }
