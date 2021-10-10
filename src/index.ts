@@ -1,9 +1,20 @@
-import express from 'express';
-const app = express();
-const port = 5000;
+import dotenv from 'dotenv';
+import 'reflect-metadata';
+import { createConnection } from 'typeorm';
+import { app } from './app';
+import { UserRouter } from './routes/user/user.router';
+import { validationError } from './utils/validation';
 
-app.get('/', (_, res) => {
-  res.status(200).send('Hello world!');
+dotenv.config();
+
+createConnection().then(() => {
+  app.use('/api/v1', UserRouter().router);
+
+  app.use(validationError);
 });
 
-app.listen(port, () => console.log(`Running on port ${port}`));
+app.listen(process.env.SERVER_PORT, () =>
+  console.log(`Running on port ${process.env.SERVER_PORT}`)
+);
+
+export {};
