@@ -6,6 +6,7 @@ import { UserRouter } from './routes/user/user.router';
 import { SiteRouter } from './routes/site/site.router';
 import { FlightRouter } from './routes/flight/flight.router';
 import { FlightClassRouter } from './routes/flight_class/flight_class.router';
+import { FlightTicketRouter } from './routes/flight_ticket/flight_ticket.router';
 import { validationError } from './utils/validation';
 
 dotenv.config();
@@ -16,7 +17,8 @@ createConnection().then(() => {
     UserRouter().router,
     SiteRouter().router,
     FlightRouter().router,
-    FlightClassRouter().router
+    FlightClassRouter().router,
+    FlightTicketRouter().router
   );
 
   app.use(validationError);
