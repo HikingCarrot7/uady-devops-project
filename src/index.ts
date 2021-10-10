@@ -3,12 +3,13 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import { app } from './app';
 import { UserRouter } from './routes/user/user.router';
+import { SiteRouter } from './routes/site/site.router';
 import { validationError } from './utils/validation';
 
 dotenv.config();
 
 createConnection().then(() => {
-  app.use('/api/v1', UserRouter().router);
+  app.use('/api/v1', UserRouter().router, SiteRouter().router);
 
   app.use(validationError);
 });

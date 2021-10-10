@@ -29,4 +29,9 @@ export class Site extends BaseEntity {
 
   @OneToMany((type) => Flight, (flight) => flight.landingSite)
   asLandingFlights: Flight[];
+
+  constructor(site: Partial<Site>) {
+    super();
+    Object.assign(this, site);
+  }
 }
