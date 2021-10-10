@@ -1,10 +1,10 @@
-import { Request, Response, Router } from "express";
-import { getCustomRepository } from "typeorm";
-import { FlightRepository } from "../../repositories/flight.repository";
-import { FlightService } from "../../services/flight.service";
-import { validate } from "../../utils/validation";
-import { Flight } from "../../entities/flight.entity";
-import { FlightRequest } from "./flight.request";
+import { Request, Response, Router } from 'express';
+import { getCustomRepository } from 'typeorm';
+import { FlightRepository } from '../../repositories/flight.repository';
+import { FlightService } from '../../services/flight.service';
+import { validate } from '../../utils/validation';
+import { Flight } from '../../entities/flight.entity';
+import { FlightRequest } from './flight.request';
 
 export const FlightRouter = () => {
   const flightService = FlightService(getCustomRepository(FlightRepository));
@@ -72,11 +72,11 @@ export const FlightRouter = () => {
   const router = Router();
 
   router
-    .route("/flights")
+    .route('/flights')
     .get(getAllFlights)
     .post(validate(FlightRequest), createFlight);
   router
-    .route("/flights/:id")
+    .route('/flights/:id')
     .get(getFlightById)
     .delete(deleteFlightById)
     .put(validate(FlightRequest), updateFlight);

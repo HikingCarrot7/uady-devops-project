@@ -1,5 +1,5 @@
-import { Flight } from "entities/flight.entity";
-import { FlightRepository } from "repositories/flight.repository";
+import { Flight } from 'entities/flight.entity';
+import { FlightRepository } from 'repositories/flight.repository';
 
 export const FlightService = (flightRepository: FlightRepository) => {
   const getAllFlights = async () => {
@@ -10,10 +10,10 @@ export const FlightService = (flightRepository: FlightRepository) => {
     const parsedId = parseInt(id);
 
     if (isNaN(parsedId)) {
-      return Promise.reject("ID inválido");
+      return Promise.reject('ID inválido');
     }
 
-    return await flightRepository.find({ id: parsedId });
+    return await flightRepository.findOne({ id: parsedId });
   };
 
   const createFlight = async (flight: Flight) => {
@@ -24,14 +24,14 @@ export const FlightService = (flightRepository: FlightRepository) => {
   const deleteFlightById = async (id: string) => {
     const parsedId = parseInt(id);
     if (isNaN(parsedId)) {
-      return Promise.reject("ID inválido");
+      return Promise.reject('ID inválido');
     }
     return await flightRepository.delete({ id: parsedId });
   };
 
   const updateFlight = async (id: string, newFlight: Flight) => {
     const result = await getFlightById(id);
-    const updatedFlight = { ...result[0], ...newFlight };
+    const updatedFlight = { ...result, ...newFlight };
     return await flightRepository.save(updatedFlight);
   };
 
