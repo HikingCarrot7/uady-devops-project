@@ -1,5 +1,5 @@
-import { User } from 'entities/user.entity';
-import { UserRepository } from 'repositories/user.repository';
+import { User } from './../entities/user.entity';
+import { UserRepository } from './../repositories/user.repository';
 
 export const UserService = (userRepository: UserRepository) => {
   const getAllUsers = async () => {

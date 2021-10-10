@@ -8,7 +8,7 @@ import { deserialize } from 'json-typescript-mapper';
 // JavaScript, we can use this clever structural-typing
 // work-around enabled by TypeScript to pass in a class
 // to our middleware.
-type Constructor<T> = { new (): T };
+export type Constructor<T> = { new (): T };
 
 // This function returns a middleware which validates that the
 // request's JSON body conforms to the passed-in type.
@@ -18,12 +18,7 @@ export function validate<T>(type: Constructor<T>): express.RequestHandler {
   return (req, res, next) => {
     let input = deserialize(type, req.body);
 
-    console.log(input);
-    console.log(req.body);
-
     let errors = validator.validateSync(input as any);
-
-    console.log(errors);
 
     if (errors.length > 0) {
       next(errors);

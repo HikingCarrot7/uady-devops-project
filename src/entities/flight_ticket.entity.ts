@@ -20,7 +20,9 @@ export class FlightTicket extends BaseEntity {
   @ManyToOne((type) => Flight, (flight) => flight.tickets)
   flight: Flight;
 
-  @ManyToOne((type) => FlightClass, (flightClass) => flightClass.tickets)
+  @ManyToOne((type) => FlightClass, (flightClass) => flightClass.tickets, {
+    eager: true,
+  })
   flightClass: FlightClass;
 
   @Column()
@@ -28,5 +30,10 @@ export class FlightTicket extends BaseEntity {
 
   flightPrice() {
     return this.passengers * this.flightClass.price;
+  }
+
+  constructor(flightTicket?: Partial<FlightTicket>) {
+    super();
+    Object.assign(this, flightTicket);
   }
 }
