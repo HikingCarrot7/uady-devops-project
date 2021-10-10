@@ -40,9 +40,30 @@ export const UserRouter = () => {
     }
   };
 
-  const updateUser = async (req: Request, res: Response) => {};
+  const updateUser = async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const userData = req.body;
+    try {
+      return res
+        .status(200)
+        .json({ user: await userService.updateUser(userId, userData) });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ error });
+    }       
+  };
 
-  const deleteUser = async (req: Request, res: Response) => {};
+  const deleteUser = async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    try {
+      return res
+        .status(200)
+        .json({ user: await userService.deleteUserById(userId) });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ error });
+    }
+  };
 
   const router = Router();
 
@@ -51,7 +72,11 @@ export const UserRouter = () => {
     .get(getAllUsers)
     .post(validate(UserRequest), createUser);
 
-  router.route('/users/:id').get(getUserById);
+  router
+    .route('/users/:id')
+      .get(getUserById)
+      .delete(deleteUser)
+      .put(validate(UserRequest), updateUser);
 
   return { router };
 };

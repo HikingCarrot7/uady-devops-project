@@ -14,11 +14,11 @@ export const UserService = (userRepository: UserRepository) => {
       return Promise.reject('ID inválido');
     }
 
-    return await userRepository.find({ id: parsedId });
+    return await userRepository.findOne({ id: parsedId });
   };
 
   const createUser = async (user: User) => {
-    const userIsRegistered = getUserByEmail(user.email);
+    const userIsRegistered = await isUserRegistered(user);
     if(userIsRegistered) {
       return Promise.reject('El email ya esta registrado');
     }
@@ -48,11 +48,13 @@ export const UserService = (userRepository: UserRepository) => {
 
   const getUserByEmail = async (email: string) => {
     const user = await userRepository.findOne({ email });
-    if (!user) {
-      return Promise.reject(`No se encontro un usuario con el email: ${email}`);
-    }
     return user;
   }  
+
+  const isUserRegistered = async (user:User) => {
+    const result = await getUserByEmail(user.email);
+    return result;
+  };
 
   return { getAllUsers, getUserById, createUser, deleteUserById, updateUser };
 };
