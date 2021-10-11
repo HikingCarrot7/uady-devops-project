@@ -10,7 +10,7 @@ let userService: any;
 
 beforeAll(() => {
   mockUsersRepository = mock<Repository<User>>();
-  userService = UserService(mockUsersRepository);
+  userService = new UserService(mockUsersRepository);
 });
 
 afterEach(() => {
