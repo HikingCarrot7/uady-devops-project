@@ -2,46 +2,48 @@ import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketRepository } from '../../repositories/flight_ticket.repository';
 import { invalidIdMsg, isValidId } from '../../utils/validateId';
 
-export const FlightTicketService = (
-  flightTicketRepository: FlightTicketRepository
-) => {
-  const getUserFlightTickets = async (userId: number | string) => {
+export class FlightTicketService {
+  constructor(private flightTicketRepo: FlightTicketRepository) {}
+
+  getUserFlightTickets = async (userId: number | string) => {
     if (!isValidId(userId)) {
       return Promise.reject(invalidIdMsg(userId));
     }
 
-    return await flightTicketRepository.find({
+    return await this.flightTicketRepo.find({
       where: { user: { id: userId } },
     });
   };
 
-  const getFlightTicketById = async (tickedId: number | string) => {
+  getFlightTicketById = async (tickedId: number | string) => {
     if (!isValidId(tickedId)) {
       return Promise.reject(invalidIdMsg(tickedId));
     }
 
-    return await flightTicketRepository.findOne({ id: tickedId });
+    return await this.flightTicketRepo.findOne({ id: tickedId });
   };
 
-  const createFlightTicket = async (
+  createFlightTicket = async (
     userId: number,
     flightId: number,
     flightClassId: number,
     passengers: number
   ) => {
     try {
-      return await flightTicketRepository.save({
+      const newTicket = await this.flightTicketRepo.save({
         user: { id: userId },
         flight: { id: flightId },
         flightClass: { id: flightClassId },
         passengers,
       });
+
+      return await this.flightTicketRepo.findOne(newTicket.id);
     } catch (error) {
       return null;
     }
   };
 
-  const updateFlightTicket = async (
+  updateFlightTicket = async (
     ticketId: number | string,
     newFlightTicket: FlightTicket
   ) => {
@@ -49,7 +51,7 @@ export const FlightTicketService = (
       return Promise.reject(invalidIdMsg(ticketId));
     }
 
-    const flightTicket = await flightTicketRepository.findOne(ticketId);
+    const flightTicket = await this.flightTicketRepo.findOne(ticketId);
 
     if (!flightTicket) {
       return null;
@@ -58,30 +60,22 @@ export const FlightTicketService = (
     // Por el momento...
     flightTicket.passengers = newFlightTicket.passengers;
 
-    return await flightTicketRepository.save(flightTicket);
+    return await this.flightTicketRepo.save(flightTicket);
   };
 
-  const deleteFlightTicket = async (ticketId: number | string) => {
+  deleteFlightTicket = async (ticketId: number | string) => {
     if (!isValidId(ticketId)) {
       return Promise.reject(invalidIdMsg(ticketId));
     }
 
-    const flightTicket = await flightTicketRepository.findOne(ticketId);
+    const flightTicket = await this.flightTicketRepo.findOne(ticketId);
 
     if (!flightTicket) {
       return null;
     }
 
-    await flightTicketRepository.delete(ticketId);
+    await this.flightTicketRepo.delete(ticketId);
 
     return flightTicket;
   };
-
-  return {
-    getUserFlightTickets,
-    getFlightTicketById,
-    createFlightTicket,
-    updateFlightTicket,
-    deleteFlightTicket,
-  };
-};
+}

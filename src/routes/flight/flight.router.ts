@@ -1,14 +1,10 @@
 import { Request, Response, Router } from 'express';
-import { getCustomRepository } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
-import { FlightRepository } from '../../repositories/flight.repository';
 import { FlightService } from '../../services/flight/flight.service';
 import { validate } from '../../utils/validation';
 import { FlightRequest } from './flight.request';
 
-export const FlightRouter = () => {
-  const flightService = FlightService(getCustomRepository(FlightRepository));
-
+export const FlightRouter = (flightService: FlightService) => {
   const getAllFlights = async (req: Request, res: Response) => {
     return res
       .status(200)

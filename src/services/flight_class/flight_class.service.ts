@@ -1,47 +1,38 @@
-import { FlightClass } from './../../entities/flight_class.entity';
-import { FlightClassRepository } from './../../repositories/flight_class.repository';
+import { FlightClass } from '../../entities/flight_class.entity';
+import { FlightClassRepository } from '../../repositories/flight_class.repository';
+import { invalidIdMsg, isValidId } from '../../utils/validateId';
 
-export const FlightClassService = (
-  flightClassRepository: FlightClassRepository
-) => {
-  const getAllFlightsClasses = async () => {
-    return await flightClassRepository.find();
+export class FlightClassService {
+  constructor(private flightClassRepository: FlightClassRepository) {}
+
+  getAllFlightsClasses = async () => {
+    return await this.flightClassRepository.find();
   };
 
-  const getFlightClassById = async (id: string) => {
-    const parsedId = parseInt(id);
-
-    if (isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+  getFlightClassById = async (id: string) => {
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
 
-    return await flightClassRepository.findOne({ id: parsedId });
+    return await this.flightClassRepository.findOne({ id });
   };
 
-  const createFlightClass = async (flightClass: FlightClass) => {
-    const newFlightClass = await flightClassRepository.save(flightClass);
-    return newFlightClass;
+  createFlightClass = async (flightClass: FlightClass) => {
+    return await this.flightClassRepository.save(flightClass);
   };
 
-  const deleteFlightClassById = async (id: string) => {
-    const parsedId = parseInt(id);
-    if (isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+  deleteFlightClassById = async (id: string) => {
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
-    return await flightClassRepository.delete({ id: parsedId });
+
+    return await this.flightClassRepository.delete({ id });
   };
 
-  const updateFlightClass = async (id: string, newFlightClass: FlightClass) => {
-    const result = await getFlightClassById(id);
+  updateFlightClass = async (id: string, newFlightClass: FlightClass) => {
+    const result = await this.getFlightClassById(id);
     const updatedFlightClass = { ...result, ...newFlightClass };
-    return await flightClassRepository.save(updatedFlightClass);
-  };
 
-  return {
-    getAllFlightsClasses,
-    getFlightClassById,
-    createFlightClass,
-    deleteFlightClassById,
-    updateFlightClass,
+    return await this.flightClassRepository.save(updatedFlightClass);
   };
-};
+}

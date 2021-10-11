@@ -1,16 +1,12 @@
 import express, { Request, Response } from 'express';
-import { getCustomRepository } from 'typeorm';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
-import { FlightTicketRepository } from '../../repositories/flight_ticket.repository';
 import { FlightTicketService } from '../../services/flight_ticket/flight_ticket.service';
 import { validate } from '../../utils/validation';
 import { FlightTicketRequest } from './flight_ticket.request';
 
-export const FlightTicketRouter = () => {
-  const flightTicketService = FlightTicketService(
-    getCustomRepository(FlightTicketRepository)
-  );
-
+export const FlightTicketRouter = (
+  flightTicketService: FlightTicketService
+) => {
   const getUserFlightTickets = async (req: Request, res: Response) => {
     const userId = req.params.id;
 
@@ -83,6 +79,8 @@ export const FlightTicketRouter = () => {
         new FlightTicket(flightTicketRequest)
       );
 
+      console.log(updatedTicket);
+
       if (!updatedTicket) {
         return res
           .status(404)
@@ -129,5 +127,14 @@ export const FlightTicketRouter = () => {
 
   router.route('/users/:id/flight-tickets').get(getUserFlightTickets);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getUserFlightTickets,
+      getFlightTicketById,
+      createFlightTicket,
+      updateFlightTicket,
+      deleteFlightTicket,
+    },
+  };
 };
