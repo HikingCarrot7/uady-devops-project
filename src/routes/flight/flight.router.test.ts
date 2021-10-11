@@ -65,7 +65,7 @@ describe('getFlightById endpoint', () => {
 });
 
 describe('createFlight endpoint', () => {
-  test('should return 201 http status code when new ticket created', async () => {
+  test('should return 201 http status code when new flight created', async () => {
     const reqBody = {
       date: '2021-12-12',
       hour: '22:00',
