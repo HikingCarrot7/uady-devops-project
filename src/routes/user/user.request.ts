@@ -1,14 +1,7 @@
-import { IsEmail, Length } from 'class-validator';
+import { Length } from 'class-validator';
+import { LoginRequest } from '../auth/login.request';
 
-export class UserRequest {
-  @Length(1, 50, { message: 'El nombre debe tener entre 1 y 50 caracteres' })
+export class UserRequest extends LoginRequest {
+  @Length(3, 35, { message: 'El nombre debe tener entre 3 y 35 caracteres' })
   name: string = '';
-
-  @IsEmail({}, { message: 'El email es inválido' })
-  email: string = '';
-
-  @Length(6, 16, {
-    message: 'La contraseña debe tener entre 6 y 16 caracteres',
-  })
-  password: string = '';
 }

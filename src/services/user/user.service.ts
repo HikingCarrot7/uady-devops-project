@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../../entities/user.entity';
 import { UserRepository } from '../../repositories/user.repository';
 import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { UserAlreadyExistsException } from './user.exceptions';
 
 export class UserService {
   constructor(private userRepository: UserRepository) {}
@@ -18,24 +19,24 @@ export class UserService {
     return await this.userRepository.findOne({ id });
   };
 
-  createUser = async (user: User) => {
-    const userIsRegistered = await this.isUserRegistered(user);
+  getUserByEmail = async (email: string) => {
+    return await this.userRepository.findOne({ email });
+  };
 
-    if (userIsRegistered) {
-      return Promise.reject('El email ya esta registrado');
+  isEmailTaken = async (email: string) => {
+    return await this.getUserByEmail(email);
+  };
+
+  createUser = async (user: User) => {
+    const emailTaken = await this.isEmailTaken(user.email);
+
+    if (emailTaken) {
+      throw new UserAlreadyExistsException();
     }
 
     user.password = await this.hashPassword(user.password);
 
     return await this.userRepository.save(user);
-  };
-
-  deleteUserById = async (id: number | string) => {
-    if (!isValidId(id)) {
-      return Promise.reject(invalidIdMsg(id));
-    }
-
-    return await this.userRepository.delete({ id });
   };
 
   updateUser = async (id: string, newUserData: User) => {
@@ -46,15 +47,15 @@ export class UserService {
     return await this.userRepository.save(updatedUser);
   };
 
+  deleteUserById = async (id: number | string) => {
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
+    }
+
+    return await this.userRepository.delete({ id });
+  };
+
   hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10);
-  };
-
-  getUserByEmail = async (email: string) => {
-    return await this.userRepository.findOne({ email });
-  };
-
-  isUserRegistered = async (user: User) => {
-    return await this.getUserByEmail(user.email);
   };
 }

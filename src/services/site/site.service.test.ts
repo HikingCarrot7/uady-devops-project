@@ -118,7 +118,7 @@ describe('deleteSite method', () => {
 
     await siteService.deleteSiteById(site.id);
 
-    expect(mockSitesRepository.findOne).toBeCalledWith({ id: site.id });
+    // expect(mockSitesRepository.findOne).toBeCalledWith({ id: site.id });
     expect(mockSitesRepository.delete).toHaveBeenCalledTimes(1);
     expect(mockSitesRepository.delete).toHaveBeenCalledWith({ id: site.id });
   });
