@@ -1,7 +1,6 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Repository } from 'typeorm';
 import { FlightClass } from '../../entities/flight_class.entity';
-import { invalidIdMsg } from '../../utils/validateId';
 import { FlightClassService } from './flight_class.service';
 
 let mockFlightClassRepository: MockProxy<Repository<FlightClass>>;
@@ -9,7 +8,7 @@ let flightClassService: any;
 
 beforeAll(() => {
   mockFlightClassRepository = mock<Repository<FlightClass>>();
-  flightClassService = FlightClassService(mockFlightClassRepository);
+  flightClassService = new FlightClassService(mockFlightClassRepository);
 });
 
 afterEach(() => {

@@ -8,7 +8,7 @@ let siteService: any;
 
 beforeAll(() => {
   mockSitesRepository = mock<Repository<Site>>();
-  siteService = SiteService(mockSitesRepository);
+  siteService = new SiteService(mockSitesRepository);
 });
 
 afterEach(() => {
@@ -35,14 +35,14 @@ describe('getSiteById method', () => {
       state: 'Yucatan',
       code: 100,
     } as Site;
-    
+
     mockSitesRepository.findOne.mockReturnValueOnce(Promise.resolve(site));
 
     await siteService.getSiteById(siteId);
 
     expect(mockSitesRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockSitesRepository.findOne).toHaveBeenCalledWith({ id: siteId});
-    expect(mockSitesRepository.findOne).toHaveReturned();    
+    expect(mockSitesRepository.findOne).toHaveBeenCalledWith({ id: siteId });
+    expect(mockSitesRepository.findOne).toHaveReturned();
   });
 });
 
@@ -57,15 +57,11 @@ describe('createSite method', () => {
 
     const newSite = { ...providedSite, id: 3 } as Site;
 
-    mockSitesRepository.save.mockReturnValueOnce(
-      Promise.resolve(newSite)
-    );
+    mockSitesRepository.save.mockReturnValueOnce(Promise.resolve(newSite));
 
     await siteService.createSite(providedSite);
 
-    expect(mockSitesRepository.save).toHaveBeenCalledWith(
-      providedSite
-    );
+    expect(mockSitesRepository.save).toHaveBeenCalledWith(providedSite);
     expect(mockSitesRepository.save).toHaveBeenCalledTimes(1);
     expect(mockSitesRepository.save).toHaveReturned();
   });
@@ -94,9 +90,7 @@ describe('UpdateSite method', () => {
       code: 101,
     } as Site;
 
-    mockSitesRepository.save.mockReturnValueOnce(
-      Promise.resolve(savedSite)
-    );
+    mockSitesRepository.save.mockReturnValueOnce(Promise.resolve(savedSite));
 
     mockSitesRepository.findOne.mockReturnValueOnce(
       Promise.resolve(fetchedSite)
@@ -105,7 +99,7 @@ describe('UpdateSite method', () => {
     await siteService.updateSite(1, providedSite);
 
     expect(mockSitesRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockSitesRepository.findOne).toHaveBeenCalledWith({ id: 1});
+    expect(mockSitesRepository.findOne).toHaveBeenCalledWith({ id: 1 });
     expect(mockSitesRepository.save).toHaveBeenCalledWith(savedSite);
   });
 });
@@ -120,14 +114,12 @@ describe('deleteSite method', () => {
       code: 101,
     } as Site;
 
-    mockSitesRepository.findOne.mockReturnValueOnce(
-      Promise.resolve(site)
-    );
+    mockSitesRepository.findOne.mockReturnValueOnce(Promise.resolve(site));
 
     await siteService.deleteSiteById(site.id);
 
     expect(mockSitesRepository.findOne).toBeCalledWith({ id: site.id });
     expect(mockSitesRepository.delete).toHaveBeenCalledTimes(1);
-    expect(mockSitesRepository.delete).toHaveBeenCalledWith( { id: site.id });
+    expect(mockSitesRepository.delete).toHaveBeenCalledWith({ id: site.id });
   });
 });
