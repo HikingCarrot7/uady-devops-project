@@ -1,5 +1,5 @@
-import { FlightClass } from 'entities/flight_class.entity';
-import { FlightClassRepository } from 'repositories/flight_class.repository';
+import { FlightClass } from './../../entities/flight_class.entity';
+import { FlightClassRepository } from './../../repositories/flight_class.repository';
 
 export const FlightClassService = (
   flightClassRepository: FlightClassRepository
