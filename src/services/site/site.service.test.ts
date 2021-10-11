@@ -8,7 +8,7 @@ let siteService: any;
 
 beforeAll(() => {
   mockSitesRepository = mock<Repository<Site>>();
-  siteService = SiteService(mockSitesRepository);
+  siteService = new SiteService(mockSitesRepository);
 });
 
 afterEach(() => {
@@ -126,7 +126,6 @@ describe('deleteSite method', () => {
 
     await siteService.deleteSiteById(site.id);
 
-    expect(mockSitesRepository.findOne).toBeCalledWith({ id: site.id });
     expect(mockSitesRepository.delete).toHaveBeenCalledTimes(1);
     expect(mockSitesRepository.delete).toHaveBeenCalledWith( { id: site.id });
   });
