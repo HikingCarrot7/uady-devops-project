@@ -57,7 +57,7 @@ describe('login method', () => {
       } as User);
     });
 
-    const compare = jest.fn((pasword, hashedPassword) => false);
+    const compare = jest.fn((password, hashedPassword) => false);
     const createToken = jest.fn().mockResolvedValue('asljdfklas');
 
     (authService.createToken as jest.Mock) = createToken;
