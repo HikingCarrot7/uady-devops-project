@@ -32,7 +32,7 @@ export const FlightRouter = (flightService: FlightService) => {
         new Flight({ ...flightRequest })
       );
 
-      return res.status(200).json({ flight: newFlight });
+      return res.status(201).json({ flight: newFlight });
     } catch (error) {
       return res.status(400).json({ error });
     }
@@ -78,5 +78,14 @@ export const FlightRouter = (flightService: FlightService) => {
     .delete(deleteFlightById)
     .put(validate(FlightRequest), updateFlight);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getAllFlights,
+      getFlightById,
+      createFlight,
+      updateFlight,
+      deleteFlightById,
+    },
+  };
 };
