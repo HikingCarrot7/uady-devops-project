@@ -35,6 +35,7 @@ describe('getSiteById method', () => {
       state: 'Yucatan',
       code: 100,
     } as Site;
+    
     mockSitesRepository.findOne.mockReturnValueOnce(Promise.resolve(site));
 
     await siteService.getSiteById(siteId);
