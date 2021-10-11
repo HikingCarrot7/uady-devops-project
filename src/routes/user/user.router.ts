@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { UserRepository } from '../../repositories/user.repository';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { validate } from '../../utils/validation';
 import { User } from './../../entities/user.entity';
 import { UserRequest } from './user.request';

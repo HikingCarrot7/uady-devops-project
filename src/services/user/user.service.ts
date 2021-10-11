@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities/user.entity';
-import { UserRepository } from '../repositories/user.repository';
-import { invalidIdMsg, isValidId } from '../utils/validateId';
+import { User } from '../../entities/user.entity';
+import { UserRepository } from '../../repositories/user.repository';
+import { invalidIdMsg, isValidId } from '../../utils/validateId';
 
 export const UserService = (userRepository: UserRepository) => {
   const getAllUsers = async () => {
