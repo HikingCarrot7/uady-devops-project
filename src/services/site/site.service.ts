@@ -1,6 +1,6 @@
-import { Site } from '../entities/site.entity';
-import { SiteRepository } from '../repositories/site.repository';
-import { invalidIdMsg, isValidId } from '../utils/validateId';
+import { Site } from '../../entities/site.entity';
+import { SiteRepository } from '../../repositories/site.repository';
+import { invalidIdMsg, isValidId } from '../../utils/validateId';
 
 export const SiteService = (siteRepository: SiteRepository) => {
   const getAllSites = async () => {
@@ -22,6 +22,11 @@ export const SiteService = (siteRepository: SiteRepository) => {
   const deleteSiteById = async (id: string) => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
+    }
+    const site = siteRepository.findOne({ id });
+
+    if(!site) {
+      return null;
     }
 
     return await siteRepository.delete({ id });
