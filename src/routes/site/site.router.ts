@@ -5,8 +5,13 @@ import { Site } from './../../entities/site.entity';
 import { SiteRequest } from './site.request';
 
 export const SiteRouter = (siteService: SiteService) => {
+
   const getAllSites = async (req: Request, res: Response) => {
-    return res.status(200).json({ sites: await siteService.getAllSites() });
+    try {
+      return res.status(200).json({ sites: await siteService.getAllSites() });
+    } catch(error) {
+      return res.status(500).json({ error });
+    }
   };
 
   const getSiteById = async (req: Request, res: Response) => {
@@ -17,7 +22,6 @@ export const SiteRouter = (siteService: SiteService) => {
         .status(200)
         .json({ site: await siteService.getSiteById(siteId) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -30,7 +34,7 @@ export const SiteRouter = (siteService: SiteService) => {
         new Site({ ...siteRequest })
       );
 
-      return res.status(200).json({ site: newSite });
+      return res.status(201).json({ site: newSite });
     } catch (error) {
       return res.status(400).json({ error });
     }
@@ -43,7 +47,6 @@ export const SiteRouter = (siteService: SiteService) => {
         .status(200)
         .json({ site: await siteService.deleteSiteById(siteId) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -56,7 +59,6 @@ export const SiteRouter = (siteService: SiteService) => {
         .status(200)
         .json({ site: await siteService.updateSite(siteId, siteData) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -73,5 +75,14 @@ export const SiteRouter = (siteService: SiteService) => {
     .delete(deleteSiteById)
     .put(validate(SiteRequest), updateSite);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getAllSites,
+      getSiteById,
+      createSite,
+      deleteSiteById,
+      updateSite,
+    }
+  };
 };
