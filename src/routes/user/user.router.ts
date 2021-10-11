@@ -6,7 +6,11 @@ import { UserRequest } from './user.request';
 
 export const UserRouter = (userService: UserService) => {
   const getAllUsers = async (req: Request, res: Response) => {
-    return res.status(200).json({ users: await userService.getAllUsers() });
+    try {
+      return res.status(200).json({ users: await userService.getAllUsers() });
+    } catch(error) {
+      return res.status(500).json({ error });
+    }
   };
 
   const getUserById = async (req: Request, res: Response) => {
@@ -71,5 +75,14 @@ export const UserRouter = (userService: UserService) => {
     .delete(deleteUser)
     .put(validate(UserRequest), updateUser);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getAllUsers,
+      getUserById,
+      createUser,
+      updateUser,
+      deleteUser,
+    }
+  };
 };
