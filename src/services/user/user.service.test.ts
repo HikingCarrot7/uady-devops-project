@@ -1,12 +1,11 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
-import { UserService } from './user.service';
 import { invalidIdMsg } from '../../utils/validateId';
+import { UserService } from './user.service';
 
 let mockUsersRepository: MockProxy<Repository<User>>;
 let userService: any;
-
 
 beforeAll(() => {
   mockUsersRepository = mock<Repository<User>>();
@@ -42,8 +41,8 @@ describe('getUserById method', () => {
     await userService.getUserById(userId);
 
     expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ id: userId});
-    expect(mockUsersRepository.findOne).toHaveReturned();    
+    expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ id: userId });
+    expect(mockUsersRepository.findOne).toHaveReturned();
   });
 
   test('get user with a invalid id', async () => {
@@ -57,11 +56,9 @@ describe('getUserById method', () => {
 
     mockUsersRepository.findOne.mockReturnValueOnce(Promise.resolve(user));
 
-    await userService
-      .getUserById(userId)
-      .catch((e: any) => {
-        expect(e).toEqual(invalidIdMsg(userId));
-      }); 
+    await userService.getUserById(userId).catch((e: any) => {
+      expect(e).toEqual(invalidIdMsg(userId));
+    });
   });
 });
 
@@ -75,15 +72,11 @@ describe('createUser method', () => {
 
     const newUser = { ...providedUser, id: 3 } as User;
 
-    mockUsersRepository.save.mockReturnValueOnce(
-      Promise.resolve(newUser)
-    );
+    mockUsersRepository.save.mockReturnValueOnce(Promise.resolve(newUser));
 
     await userService.createUser(providedUser);
 
-    expect(mockUsersRepository.save).toHaveBeenCalledWith(
-      providedUser
-    );
+    expect(mockUsersRepository.save).toHaveBeenCalledWith(providedUser);
     expect(mockUsersRepository.save).toHaveBeenCalledTimes(1);
     expect(mockUsersRepository.save).toHaveReturned();
   });
@@ -109,9 +102,7 @@ describe('UpdateUser method', () => {
       password: 'user1password',
     } as User;
 
-    mockUsersRepository.save.mockReturnValueOnce(
-      Promise.resolve(savedUser)
-    );
+    mockUsersRepository.save.mockReturnValueOnce(Promise.resolve(savedUser));
 
     mockUsersRepository.findOne.mockReturnValueOnce(
       Promise.resolve(fetchedUser)
@@ -120,7 +111,7 @@ describe('UpdateUser method', () => {
     await userService.updateUser(1, providedUser);
 
     expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ id: 1});
+    expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ id: 1 });
     expect(mockUsersRepository.save).toHaveReturned();
   });
 });
@@ -134,13 +125,11 @@ describe('deleteUser method', () => {
       password: 'user1password',
     } as User;
 
-    mockUsersRepository.findOne.mockReturnValueOnce(
-      Promise.resolve(user)
-    );
+    mockUsersRepository.findOne.mockReturnValueOnce(Promise.resolve(user));
 
     await userService.deleteUserById(user.id);
 
     expect(mockUsersRepository.delete).toHaveBeenCalledTimes(1);
-    expect(mockUsersRepository.delete).toHaveBeenCalledWith( { id: user.id });
+    expect(mockUsersRepository.delete).toHaveBeenCalledWith({ id: user.id });
   });
 });
