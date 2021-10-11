@@ -31,7 +31,7 @@ export const FlightClassRouter = (flightClassService: FlightClassService) => {
         new FlightClass({ ...flightClassRequest })
       );
 
-      return res.status(200).json({ flightClass: newFlightClass });
+      return res.status(201).json({ flightClass: newFlightClass });
     } catch (error) {
       return res.status(400).json({ error });
     }
@@ -80,5 +80,14 @@ export const FlightClassRouter = (flightClassService: FlightClassService) => {
     .delete(deleteFlightClassById)
     .put(validate(FlightClassRequest), updateFlightClass);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getAllFlightsClasses,
+      getFlightClassById,
+      createFlightClass,
+      updateFlightClass,
+      deleteFlightClassById,
+    },
+  };
 };
