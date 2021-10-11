@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express';
 import { getCustomRepository } from 'typeorm';
+import { Flight } from '../../entities/flight.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
 import { FlightService } from '../../services/flight.service';
 import { validate } from '../../utils/validation';
-import { Flight } from '../../entities/flight.entity';
 import { FlightRequest } from './flight.request';
 
 export const FlightRouter = () => {
@@ -75,6 +75,7 @@ export const FlightRouter = () => {
     .route('/flights')
     .get(getAllFlights)
     .post(validate(FlightRequest), createFlight);
+
   router
     .route('/flights/:id')
     .get(getFlightById)

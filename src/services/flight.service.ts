@@ -1,5 +1,6 @@
-import { Flight } from 'entities/flight.entity';
-import { FlightRepository } from 'repositories/flight.repository';
+import { Flight } from '../entities/flight.entity';
+import { FlightRepository } from '../repositories/flight.repository';
+import { invalidIdMsg, isValidId } from '../utils/validateId';
 
 export const FlightService = (flightRepository: FlightRepository) => {
   const getAllFlights = async () => {
@@ -7,31 +8,29 @@ export const FlightService = (flightRepository: FlightRepository) => {
   };
 
   const getFlightById = async (id: string) => {
-    const parsedId = parseInt(id);
-
-    if (isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
 
-    return await flightRepository.findOne({ id: parsedId });
+    return await flightRepository.findOne({ id });
   };
 
   const createFlight = async (flight: Flight) => {
-    const newFlight = await flightRepository.save(flight);
-    return newFlight;
+    return await flightRepository.save(flight);
   };
 
   const deleteFlightById = async (id: string) => {
-    const parsedId = parseInt(id);
-    if (isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
-    return await flightRepository.delete({ id: parsedId });
+
+    return await flightRepository.delete({ id });
   };
 
   const updateFlight = async (id: string, newFlight: Flight) => {
     const result = await getFlightById(id);
     const updatedFlight = { ...result, ...newFlight };
+
     return await flightRepository.save(updatedFlight);
   };
 

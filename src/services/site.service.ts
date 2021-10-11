@@ -1,5 +1,6 @@
-import { Site } from 'entities/site.entity';
-import { SiteRepository } from 'repositories/site.repository';
+import { Site } from '../entities/site.entity';
+import { SiteRepository } from '../repositories/site.repository';
+import { invalidIdMsg, isValidId } from '../utils/validateId';
 
 export const SiteService = (siteRepository: SiteRepository) => {
   const getAllSites = async () => {
@@ -7,31 +8,29 @@ export const SiteService = (siteRepository: SiteRepository) => {
   };
 
   const getSiteById = async (id: string) => {
-    const parsedId = parseInt(id);
-
-    if (isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
 
-    return await siteRepository.findOne({ id: parsedId });
+    return await siteRepository.findOne({ id });
   };
 
   const createSite = async (site: Site) => {
-    const newSite = await siteRepository.save(site);
-    return newSite;
+    return await siteRepository.save(site);
   };
 
   const deleteSiteById = async (id: string) => {
-    const parsedId = parseInt(id);
-    if(isNaN(parsedId)) {
-      return Promise.reject('ID inválido');
+    if (!isValidId(id)) {
+      return Promise.reject(invalidIdMsg(id));
     }
-    return await siteRepository.delete({ id: parsedId });
+
+    return await siteRepository.delete({ id });
   };
 
   const updateSite = async (id: string, newSite: Site) => {
     const result = await getSiteById(id);
-    const updatedSite = {...result, ...newSite};
+    const updatedSite = { ...result, ...newSite };
+
     return await siteRepository.save(updatedSite);
   };
 
