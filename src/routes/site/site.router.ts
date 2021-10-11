@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { SiteRepository } from '../../repositories/site.repository';
-import { SiteService } from '../../services/site.service';
+import { SiteService } from '../../services/site/site.service';
 import { validate } from '../../utils/validation';
 import { Site } from './../../entities/site.entity';
 import { SiteRequest } from './site.request';
