@@ -36,7 +36,7 @@ export const FlightRouter = () => {
         new Flight({ ...flightRequest })
       );
 
-      return res.status(200).json({ site: newFlight });
+      return res.status(200).json({ flight: newFlight });
     } catch (error) {
       return res.status(400).json({ error });
     }

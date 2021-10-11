@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import { app } from './app';
+import { FlightClassRouter } from './routes/flight_class/flight_class.router';
 import { FlightRouter } from './routes/flight/flight.router';
 import { FlightTicketRouter } from './routes/flight_ticket/flight_ticket.router';
 import { SiteRouter } from './routes/site/site.router';
@@ -16,7 +17,9 @@ createConnection().then(() => {
     UserRouter().router,
     FlightTicketRouter().router,
     SiteRouter().router,
-    FlightRouter().router
+    FlightRouter().router,
+    FlightClassRouter().router,
+    FlightTicketRouter().router
   );
 
   app.use(validationError);
