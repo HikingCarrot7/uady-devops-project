@@ -1,14 +1,10 @@
 import { Request, Response, Router } from 'express';
-import { getCustomRepository } from 'typeorm';
-import { SiteRepository } from '../../repositories/site.repository';
-import { SiteService } from '../../services/site.service';
+import { SiteService } from '../../services/site/site.service';
 import { validate } from '../../utils/validation';
 import { Site } from './../../entities/site.entity';
 import { SiteRequest } from './site.request';
 
-export const SiteRouter = () => {
-  const siteService = SiteService(getCustomRepository(SiteRepository));
-
+export const SiteRouter = (siteService: SiteService) => {
   const getAllSites = async (req: Request, res: Response) => {
     return res.status(200).json({ sites: await siteService.getAllSites() });
   };
@@ -62,20 +58,20 @@ export const SiteRouter = () => {
     } catch (error) {
       console.log(error);
       return res.status(400).json({ error });
-    }    
+    }
   };
 
   const router = Router();
 
   router
     .route('/sites')
-      .get(getAllSites)
-      .post(validate(SiteRequest), createSite);
+    .get(getAllSites)
+    .post(validate(SiteRequest), createSite);
   router
     .route('/sites/:id')
-      .get(getSiteById)
-      .delete(deleteSiteById)
-      .put(validate(SiteRequest), updateSite);
+    .get(getSiteById)
+    .delete(deleteSiteById)
+    .put(validate(SiteRequest), updateSite);
 
   return { router };
 };

@@ -1,14 +1,10 @@
 import { Request, Response, Router } from 'express';
-import { getCustomRepository } from 'typeorm';
-import { UserRepository } from '../../repositories/user.repository';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { validate } from '../../utils/validation';
 import { User } from './../../entities/user.entity';
 import { UserRequest } from './user.request';
 
-export const UserRouter = () => {
-  const userService = UserService(getCustomRepository(UserRepository));
-
+export const UserRouter = (userService: UserService) => {
   const getAllUsers = async (req: Request, res: Response) => {
     return res.status(200).json({ users: await userService.getAllUsers() });
   };
@@ -21,7 +17,6 @@ export const UserRouter = () => {
         .status(200)
         .json({ user: await userService.getUserById(userId) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -48,9 +43,8 @@ export const UserRouter = () => {
         .status(200)
         .json({ user: await userService.updateUser(userId, userData) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
-    }       
+    }
   };
 
   const deleteUser = async (req: Request, res: Response) => {
@@ -60,7 +54,6 @@ export const UserRouter = () => {
         .status(200)
         .json({ user: await userService.deleteUserById(userId) });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -74,9 +67,9 @@ export const UserRouter = () => {
 
   router
     .route('/users/:id')
-      .get(getUserById)
-      .delete(deleteUser)
-      .put(validate(UserRequest), updateUser);
+    .get(getUserById)
+    .delete(deleteUser)
+    .put(validate(UserRequest), updateUser);
 
   return { router };
 };

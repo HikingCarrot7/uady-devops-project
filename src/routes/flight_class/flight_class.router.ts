@@ -1,16 +1,10 @@
 import { Request, Response, Router } from 'express';
-import { getCustomRepository } from 'typeorm';
-import { FlightClassRepository } from '../../repositories/flight_class.repository';
-import { FlightClassService } from '../../services/flight_class.service';
-import { validate } from '../../utils/validation';
 import { FlightClass } from '../../entities/flight_class.entity';
+import { FlightClassService } from '../../services/flight_class/flight_class.service';
+import { validate } from '../../utils/validation';
 import { FlightClassRequest } from './flight_class.request';
 
-export const FlightClassRouter = () => {
-  const flightClassService = FlightClassService(
-    getCustomRepository(FlightClassRepository)
-  );
-
+export const FlightClassRouter = (flightClassService: FlightClassService) => {
   const getAllFlightsClasses = async (req: Request, res: Response) => {
     return res.status(200).json({
       flightsClasses: await flightClassService.getAllFlightsClasses(),
@@ -25,7 +19,6 @@ export const FlightClassRouter = () => {
         flightClass: await flightClassService.getFlightClassById(flightClassId),
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -54,7 +47,6 @@ export const FlightClassRouter = () => {
         ),
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -71,7 +63,6 @@ export const FlightClassRouter = () => {
         ),
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -82,6 +73,7 @@ export const FlightClassRouter = () => {
     .route('/flights-classes')
     .get(getAllFlightsClasses)
     .post(validate(FlightClassRequest), createFlightClass);
+
   router
     .route('/flights-classes/:id')
     .get(getFlightClassById)

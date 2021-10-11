@@ -9,7 +9,7 @@ let flightTicketService: any;
 
 beforeAll(() => {
   mockFlightTicketsRepository = mock<Repository<FlightTicket>>();
-  flightTicketService = FlightTicketService(mockFlightTicketsRepository);
+  flightTicketService = new FlightTicketService(mockFlightTicketsRepository);
 });
 
 afterEach(() => {
