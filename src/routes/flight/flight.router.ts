@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
-import { FlightService } from '../../services/flight.service';
+import { FlightService } from '../../services/flight/flight.service';
 import { validate } from '../../utils/validation';
 import { FlightRequest } from './flight.request';
 

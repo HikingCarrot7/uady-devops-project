@@ -1,6 +1,6 @@
-import { Flight } from '../entities/flight.entity';
-import { FlightRepository } from '../repositories/flight.repository';
-import { invalidIdMsg, isValidId } from '../utils/validateId';
+import { Flight } from '../../entities/flight.entity';
+import { FlightRepository } from '../../repositories/flight.repository';
+import { invalidIdMsg, isValidId } from '../../utils/validateId';
 
 export const FlightService = (flightRepository: FlightRepository) => {
   const getAllFlights = async () => {
