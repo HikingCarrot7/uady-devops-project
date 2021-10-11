@@ -29,7 +29,7 @@ export const UserRouter = (userService: UserService) => {
         new User({ ...userRequest })
       );
 
-      return res.status(200).json({ user: newUser });
+      return res.status(201).json({ user: newUser });
     } catch (error) {
       return res.status(400).json({ error });
     }

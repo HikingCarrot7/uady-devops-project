@@ -1,44 +1,40 @@
 import dotenv from 'dotenv';
 import 'reflect-metadata';
-import { createConnection, getCustomRepository } from 'typeorm';
+import { createConnection } from 'typeorm';
 import { app } from './app';
-import { FlightRepository } from './repositories/flight.repository';
-import { FlightClassRepository } from './repositories/flight_class.repository';
-import { FlightTicketRepository } from './repositories/flight_ticket.repository';
-import { SiteRepository } from './repositories/site.repository';
-import { UserRepository } from './repositories/user.repository';
+import { authenticateJWT } from './middleware/auth.middleware';
+import { AuthRouter } from './routes/auth/auth.router';
 import { FlightRouter } from './routes/flight/flight.router';
 import { FlightClassRouter } from './routes/flight_class/flight_class.router';
 import { FlightTicketRouter } from './routes/flight_ticket/flight_ticket.router';
 import { SiteRouter } from './routes/site/site.router';
 import { UserRouter } from './routes/user/user.router';
-import { FlightService } from './services/flight/flight.service';
-import { FlightClassService } from './services/flight_class/flight_class.service';
-import { FlightTicketService } from './services/flight_ticket/flight_ticket.service';
-import { SiteService } from './services/site/site.service';
-import { UserService } from './services/user/user.service';
+import { createDefaultServices } from './utils/services.factory';
 import { validationError } from './utils/validation';
 
 dotenv.config();
 
 createConnection().then(() => {
+  const {
+    userService,
+    authService,
+    flightTicketService,
+    siteService,
+    flightService,
+    flightClassService,
+  } = createDefaultServices();
+
+  app.use('/api/v1/', AuthRouter(authService).router);
+
+  app.use(authenticateJWT(userService));
+
   app.use(
     '/api/v1',
-
-    UserRouter(new UserService(getCustomRepository(UserRepository))).router,
-
-    FlightTicketRouter(
-      new FlightTicketService(getCustomRepository(FlightTicketRepository))
-    ).router,
-
-    SiteRouter(new SiteService(getCustomRepository(SiteRepository))).router,
-
-    FlightRouter(new FlightService(getCustomRepository(FlightRepository)))
-      .router,
-
-    FlightClassRouter(
-      new FlightClassService(getCustomRepository(FlightClassRepository))
-    ).router
+    UserRouter(userService).router,
+    FlightTicketRouter(flightTicketService).router,
+    SiteRouter(siteService).router,
+    FlightRouter(flightService).router,
+    FlightClassRouter(flightClassService).router
   );
 
   app.use(validationError);

@@ -21,18 +21,18 @@ export class SiteService {
     return await this.siteRepository.save(site);
   };
 
+  updateSite = async (id: string, newSite: Site) => {
+    const result = await this.getSiteById(id);
+    const updatedSite = { ...result, ...newSite };
+
+    return await this.siteRepository.save(updatedSite);
+  };
+
   deleteSiteById = async (id: string) => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 
     return await this.siteRepository.delete({ id });
-  };
-
-  updateSite = async (id: string, newSite: Site) => {
-    const result = await this.getSiteById(id);
-    const updatedSite = { ...result, ...newSite };
-
-    return await this.siteRepository.save(updatedSite);
   };
 }

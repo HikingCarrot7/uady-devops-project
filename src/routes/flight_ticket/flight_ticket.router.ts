@@ -79,8 +79,6 @@ export const FlightTicketRouter = (
         new FlightTicket(flightTicketRequest)
       );
 
-      console.log(updatedTicket);
-
       if (!updatedTicket) {
         return res
           .status(404)
