@@ -21,18 +21,18 @@ export class FlightService {
     return await this.flightRepository.save(flight);
   };
 
+  updateFlight = async (id: string, newFlight: Flight) => {
+    const result = await this.getFlightById(id);
+    const updatedFlight = { ...result, ...newFlight };
+
+    return await this.flightRepository.save(updatedFlight);
+  };
+
   deleteFlightById = async (id: string) => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 
     return await this.flightRepository.delete({ id });
-  };
-
-  updateFlight = async (id: string, newFlight: Flight) => {
-    const result = await this.getFlightById(id);
-    const updatedFlight = { ...result, ...newFlight };
-
-    return await this.flightRepository.save(updatedFlight);
   };
 }
