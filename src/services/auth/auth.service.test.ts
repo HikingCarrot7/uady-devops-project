@@ -41,9 +41,9 @@ describe('login method', () => {
     const result = await authService.login(providedEmail, '123456', compare);
 
     expect(mockUserService.getUserByEmail).toBeCalledWith(providedEmail);
-    expect(compare.mock.calls.length).toBe(2);
-    expect(createToken.mock.calls.length).toBe(2);
-    expect(result).not.toBeDefined();
+    expect(compare.mock.calls.length).toBe(1);
+    expect(createToken.mock.calls.length).toBe(1);
+    expect(result).toBeDefined();
   });
 
   test('login user with invalid password', async () => {

@@ -2,7 +2,10 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../../entities/user.entity';
 import { UserRepository } from '../../repositories/user.repository';
 import { invalidIdMsg, isValidId } from '../../utils/validateId';
-import { UserAlreadyExistsException } from './user.exceptions';
+import {
+  UserAlreadyExistsException,
+  UserNotFoundException,
+} from './user.exceptions';
 
 export class UserService {
   constructor(private userRepository: UserRepository) {}
@@ -11,12 +14,18 @@ export class UserService {
     return await this.userRepository.find();
   };
 
-  getUserById = async (id: string) => {
+  getUserById = async (id: number | string) => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 
-    return await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOne({ id });
+
+    if (!user) {
+      throw new UserNotFoundException(id);
+    }
+
+    return user;
   };
 
   getUserByEmail = async (email: string) => {
