@@ -3,8 +3,8 @@ import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
 import { AuthService } from '../../services/auth/auth.service';
 import {
+  EmailAlreadyTakenException,
   InvalidPasswordException,
-  UserAlreadyExistsException,
   UserNotRegisteredException,
 } from '../../services/user/user.exceptions';
 import { AuthRouter } from './auth.router';
@@ -91,7 +91,7 @@ describe('register endpoint', () => {
 
   test('should return 409 http status code if user already exists', async () => {
     mockAuthService.register.mockImplementation((user) => {
-      throw new UserAlreadyExistsException();
+      throw new EmailAlreadyTakenException();
     });
 
     const mockReq = getMockReq();

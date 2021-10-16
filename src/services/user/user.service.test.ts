@@ -104,13 +104,11 @@ describe('UpdateUser method', () => {
 
     mockUsersRepository.save.mockReturnValueOnce(Promise.resolve(savedUser));
 
-    mockUsersRepository.findOne.mockReturnValueOnce(
-      Promise.resolve(fetchedUser)
-    );
+    mockUsersRepository.findOne.mockReturnValue(Promise.resolve(fetchedUser));
 
     await userService.updateUser(1, providedUser);
 
-    expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
+    expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(3);
     expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ id: 1 });
     expect(mockUsersRepository.save).toHaveReturned();
   });

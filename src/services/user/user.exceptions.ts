@@ -1,5 +1,10 @@
-export class UserAlreadyExistsException extends Error {
-  constructor(msg = 'El email ya está registrado!') {
+export class EmailAlreadyTakenException extends Error {
+  constructor(email?: string, msg = 'El email ya está registrado!') {
+    if (email) {
+      super(`El email: ${email} ya está registrado!`);
+      return;
+    }
+
     super(msg);
   }
 }

@@ -14,10 +14,12 @@ export class FlightTicket extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User, (user) => user.tickets)
+  @ManyToOne((type) => User, (user) => user.tickets, { onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne((type) => Flight, (flight) => flight.tickets)
+  @ManyToOne((type) => Flight, (flight) => flight.tickets, {
+    onDelete: 'CASCADE',
+  })
   flight: Flight;
 
   @ManyToOne((type) => FlightClass, (flightClass) => flightClass.tickets, {

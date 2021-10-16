@@ -15,7 +15,7 @@ export class AuthService {
     password: string,
     // Para propósitos de prueba.
     compareFunction?: (password: string, hashedPassword: string) => boolean
-  ) {
+  ): Promise<string> {
     const user = await this.userService.getUserByEmail(email);
 
     if (!user) {
@@ -38,7 +38,9 @@ export class AuthService {
   }
 
   async register(provideUser: User) {
-    const newUser = await this.userService.createUser(provideUser);
+    const { password, ...newUser } = await this.userService.createUser(
+      provideUser
+    );
 
     const { id, email } = newUser;
 
@@ -47,7 +49,7 @@ export class AuthService {
     return { ...newUser, token };
   }
 
-  private createToken(userId: number, email: string) {
+  private createToken(userId: number, email: string): string {
     return jwt.sign({ id: userId, email }, process.env.TOKEN_KEY!, {
       expiresIn: '5h',
     });

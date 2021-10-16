@@ -3,18 +3,18 @@ import { User } from '../../entities/user.entity';
 import { UserRepository } from '../../repositories/user.repository';
 import { invalidIdMsg, isValidId } from '../../utils/validateId';
 import {
-  UserAlreadyExistsException,
+  EmailAlreadyTakenException,
   UserNotFoundException,
 } from './user.exceptions';
 
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  getAllUsers = async () => {
+  getAllUsers = async (): Promise<User[]> => {
     return await this.userRepository.find();
   };
 
-  getUserById = async (id: number | string) => {
+  getUserById = async (id: number | string): Promise<User> => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
@@ -28,19 +28,21 @@ export class UserService {
     return user;
   };
 
-  getUserByEmail = async (email: string) => {
+  getUserByEmail = async (email: string): Promise<User | undefined> => {
     return await this.userRepository.findOne({ email });
   };
 
   isEmailTaken = async (email: string) => {
-    return await this.getUserByEmail(email);
+    const user = await this.getUserByEmail(email);
+
+    return !!user;
   };
 
-  createUser = async (user: User) => {
+  createUser = async (user: User): Promise<User> => {
     const emailTaken = await this.isEmailTaken(user.email);
 
     if (emailTaken) {
-      throw new UserAlreadyExistsException();
+      throw new EmailAlreadyTakenException();
     }
 
     user.password = await this.hashPassword(user.password);
@@ -48,20 +50,46 @@ export class UserService {
     return await this.userRepository.save(user);
   };
 
-  updateUser = async (id: string, newUserData: User) => {
-    const result = await this.getUserById(id);
-    const newPassword = await this.hashPassword(newUserData.password);
-    const updatedUser = { ...result, ...newUserData, password: newPassword };
+  updateUser = async (
+    id: number | string,
+    providedUser: User
+  ): Promise<User> => {
+    const actualUser = await this.getUserById(id);
+    const userWithEmail = await this.getUserByEmail(providedUser.email);
 
-    return await this.userRepository.save(updatedUser);
+    const emailTaken = userWithEmail && actualUser.id !== userWithEmail.id;
+
+    if (emailTaken) {
+      throw new EmailAlreadyTakenException(providedUser.email);
+    }
+
+    let newPassword = actualUser.password;
+
+    if (providedUser.password) {
+      newPassword = await this.hashPassword(providedUser.password);
+    }
+
+    const updatedUser = new User({
+      ...actualUser,
+      ...providedUser,
+      password: newPassword,
+    });
+
+    await this.userRepository.save(updatedUser);
+
+    return await this.getUserById(id);
   };
 
-  deleteUserById = async (id: number | string) => {
+  deleteUserById = async (id: number | string): Promise<User> => {
     if (!isValidId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 
-    return await this.userRepository.delete({ id });
+    const userToDelete = await this.getUserById(id);
+
+    await this.userRepository.delete({ id });
+
+    return userToDelete;
   };
 
   hashPassword = async (password: string) => {
