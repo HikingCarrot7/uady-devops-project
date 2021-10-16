@@ -125,5 +125,14 @@ export const UserRouter = (userService: UserService) => {
     .put(validate(UpdateUserRequest), updateUser)
     .delete(deleteUser);
 
-  return { router };
+  return {
+    router,
+    routes: {
+      getAllUsers,
+      getUserById,
+      createUser,
+      updateUser,
+      deleteUser,
+    },
+  };
 };
