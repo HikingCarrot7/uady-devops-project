@@ -2,9 +2,8 @@ import { getMockReq, getMockRes } from '@jest-mock/express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Site } from '../../entities/site.entity';
 import { SiteService } from '../../services/site/site.service';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 import { SiteRouter } from './site.router';
-
 
 let mockSiteService: MockProxy<SiteService>;
 let siteRouter: any;
@@ -29,7 +28,7 @@ describe('getAllSites endpoint', () => {
 
     expect(mockSiteService.getAllSites).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({'sites': []});
+    expect(mockRes.json).toHaveBeenCalledWith([]);
   });
 
   test('get all sites should return 500 http status if typeorm can´t connect to mysql', async () => {
@@ -41,9 +40,9 @@ describe('getAllSites endpoint', () => {
     await siteRouter.routes.getAllSites(mockReq, mockRes);
 
     expect(mockSiteService.getAllSites).toHaveBeenCalledTimes(1);
-    expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({error: {}});
-  });  
+    expect(mockRes.sendStatus).toHaveBeenCalledWith(500);
+    expect(mockRes.json).not.toBeCalled();
+  });
 });
 
 describe('getSiteById endpoint', () => {
@@ -52,23 +51,16 @@ describe('getSiteById endpoint', () => {
 
     const site = {
       id: parseInt(siteId),
-      country: 'Mexico',
-      city: 'Merida',
-      state: 'Yucatan',
+      country: { id: 1, name: 'México', phoneCode: 52 },
+      state: 'Yucatán',
+      city: 'Mérida',
     };
 
-    mockSiteService.getSiteById.mockImplementation(
-      async (siteId) => {
-        if (!isValidId(siteId)) {
-          return Promise.reject(invalidIdMsg(siteId));
-        }
+    mockSiteService.getSiteById.mockImplementation(async (siteId) => {
+      if (siteId == site.id) return Promise.resolve(site as Site);
 
-        if (siteId == site.id)
-          return Promise.resolve(site as Site);
-
-        return Promise.resolve(null as unknown as Site);
-      }
-    );
+      return Promise.resolve(null as unknown as Site);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -79,31 +71,28 @@ describe('getSiteById endpoint', () => {
 
     expect(mockSiteService.getSiteById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockRes.json).toBeCalledWith({site});
+    expect(mockRes.json).toBeCalledWith(site);
   });
 
-  test('should return 400 http status code if the site id is invalid', async () => {
+  test('should return 500 http status code if the site id is invalid', async () => {
     const siteId = 'abc';
 
     const site = {
       id: 1,
-      country: 'Mexico',
-      city: 'Merida',
+      country: { id: 1, name: 'México', phoneCode: 52 },
       state: 'Yucatan',
+      city: 'Merida',
     };
 
-    mockSiteService.getSiteById.mockImplementation(
-      async (siteId) => {
-        if (!isValidId(siteId)) {
-          return Promise.reject(invalidIdMsg(siteId));
-        }
-
-        if (siteId == site.id)
-          return Promise.resolve(site as Site);
-
-        return Promise.resolve(null as unknown as Site);
+    mockSiteService.getSiteById.mockImplementation(async (siteId) => {
+      if (!isNumericId(siteId)) {
+        return Promise.reject(invalidIdMsg(siteId));
       }
-    );
+
+      if (siteId == site.id) return Promise.resolve(site as Site);
+
+      return Promise.resolve(null as unknown as Site);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -113,27 +102,25 @@ describe('getSiteById endpoint', () => {
     await siteRouter.routes.getSiteById(mockReq, mockRes);
 
     expect(mockSiteService.getSiteById).toBeCalledTimes(1);
-    expect(mockRes.status).toBeCalledWith(400);
-    expect(mockRes.json).toBeCalledWith({ 'error': invalidIdMsg(siteId)});
+    expect(mockRes.sendStatus).toBeCalledWith(500);
+    expect(mockRes.json).not.toBeCalled();
   });
 });
 
 describe('createSite endpoint', () => {
   test('should return 201 http status code when new site is created', async () => {
     const reqBody = {
-      country: 'Mexico',
-      city: 'Merida',
-      state: 'Yucatan',
+      countryId: 1,
+      state: 'Yucatán',
+      city: 'Mérida',
     };
 
-    mockSiteService.createSite.mockImplementation(
-      () => {
-        return Promise.resolve({
-          id: 1,
-          ...reqBody,
-        } as unknown as Site);
-      }
-    );
+    mockSiteService.createSite.mockImplementation(() => {
+      return Promise.resolve({
+        id: 1,
+        ...reqBody,
+      } as unknown as Site);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -144,53 +131,53 @@ describe('createSite endpoint', () => {
 
     expect(mockSiteService.createSite).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith({ site: {id: 1, ...reqBody} });
-  });  
+    expect(mockRes.json).toHaveBeenCalledWith({ id: 1, ...reqBody });
+  });
 });
 
 describe('updateSite endpoint', () => {
   test('should return 200 http status code when a site is updated', async () => {
-    const siteId = '1';
+    const siteId = 1;
 
-    const reqBody = {
-      country: 'United States',
-    };
-
-    const originalSite = {
-      id: parseInt(siteId),
-      country: 'Mexico',
-      city: 'Merida',
-      state: 'Yucatan',
+    const providedSite = {
+      countryId: 1,
+      state: 'Yucatán',
+      city: 'Mérida',
     };
 
     const updatedSite = {
-      id: parseInt(siteId),
-      country: 'United States',
-      city: 'Merida',
-      state: 'Yucatan',
+      id: 1,
+      country: { id: 1, name: 'México', phoneCode: 52 },
+      state: 'Yucatán',
+      city: 'Valladolid',
     };
 
     mockSiteService.updateSite.mockImplementation(
-      (siteId, newSite) => {
-        return Promise.resolve({...originalSite, ...newSite} as Site);
+      (siteId, countryId, providedSite) => {
+        return Promise.resolve(updatedSite as Site);
       }
     );
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = siteId;
-    mockReq.body = reqBody;
+    mockReq.params.id = `${siteId}`;
+    mockReq.body = providedSite;
 
     await siteRouter.routes.updateSite(mockReq, mockRes);
 
     expect(mockSiteService.updateSite).toHaveBeenCalledTimes(1);
+
+    const { countryId, ...restProvidedSite } = providedSite;
+
     expect(mockSiteService.updateSite).toHaveBeenCalledWith(
       siteId,
-      reqBody
+      countryId,
+      restProvidedSite
     );
+
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({site: updatedSite});
+    expect(mockRes.json).toHaveBeenCalledWith(updatedSite);
   });
 });
 
@@ -198,7 +185,9 @@ describe('deleteSite endpoint', () => {
   test('should return 200 http status when a site is deleted', async () => {
     const siteId = '1';
 
-    mockSiteService.deleteSiteById.mockRejectedValueOnce({});
+    mockSiteService.deleteSiteById.mockReturnValueOnce(
+      Promise.resolve({} as Site)
+    );
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -208,7 +197,7 @@ describe('deleteSite endpoint', () => {
     await siteRouter.routes.deleteSiteById(mockReq, mockRes);
 
     expect(mockSiteService.deleteSiteById).toHaveBeenCalledTimes(1);
-    expect(mockSiteService.deleteSiteById).toHaveBeenCalledWith(siteId);
+    expect(mockSiteService.deleteSiteById).toHaveBeenCalledWith(1);
     expect(mockRes.status).toBeCalledWith(200);
   });
 });

@@ -1,8 +1,8 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
 import {
+  EmailAlreadyTakenException,
   InvalidPasswordException,
-  UserAlreadyExistsException,
 } from '../user/user.exceptions';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -41,9 +41,9 @@ describe('login method', () => {
     const result = await authService.login(providedEmail, '123456', compare);
 
     expect(mockUserService.getUserByEmail).toBeCalledWith(providedEmail);
-    expect(compare.mock.calls.length).toBe(2);
-    expect(createToken.mock.calls.length).toBe(2);
-    expect(result).not.toBeDefined();
+    expect(compare.mock.calls.length).toBe(1);
+    expect(createToken.mock.calls.length).toBe(1);
+    expect(result).toBeDefined();
   });
 
   test('login user with invalid password', async () => {
@@ -108,12 +108,12 @@ describe('register method', () => {
     };
 
     mockUserService.createUser.mockImplementation((user) => {
-      throw new UserAlreadyExistsException();
+      throw new EmailAlreadyTakenException();
     });
 
     expect(async () => {
       await authService.register(providedUser);
-    }).rejects.toThrowError(UserAlreadyExistsException);
+    }).rejects.toThrowError(EmailAlreadyTakenException);
 
     await flushPromises();
 

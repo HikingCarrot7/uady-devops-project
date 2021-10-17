@@ -1,38 +1,68 @@
 import { Site } from '../../entities/site.entity';
+import { CountryRepository } from '../../repositories/country.repository';
 import { SiteRepository } from '../../repositories/site.repository';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import {
+  CountryNotFoundException,
+  SiteNotFoundException,
+} from './site.exceptions';
 
 export class SiteService {
-  constructor(private siteRepository: SiteRepository) {}
+  constructor(
+    private siteRepository: SiteRepository,
+    private countryRepository: CountryRepository
+  ) {}
 
-  getAllSites = async () => {
+  async getAllSites(): Promise<Site[]> {
     return await this.siteRepository.find();
-  };
+  }
 
-  getSiteById = async (id: string) => {
-    if (!isValidId(id)) {
-      return Promise.reject(invalidIdMsg(id));
+  async getSiteById(id: number): Promise<Site> {
+    const site = await this.siteRepository.findOne({ id });
+
+    if (!site) {
+      throw new SiteNotFoundException(id);
     }
 
-    return await this.siteRepository.findOne({ id });
-  };
+    return site;
+  }
 
-  createSite = async (site: Site) => {
-    return await this.siteRepository.save(site);
-  };
+  async createSite(countryId: number, providedSite: Site): Promise<Site> {
+    const country = await this.countryRepository.findOne({ id: countryId });
 
-  updateSite = async (id: string, newSite: Site) => {
-    const result = await this.getSiteById(id);
-    const updatedSite = { ...result, ...newSite };
-
-    return await this.siteRepository.save(updatedSite);
-  };
-
-  deleteSiteById = async (id: string) => {
-    if (!isValidId(id)) {
-      return Promise.reject(invalidIdMsg(id));
+    if (!country) {
+      throw new CountryNotFoundException(countryId);
     }
 
-    return await this.siteRepository.delete({ id });
-  };
+    providedSite.country = country;
+
+    return await this.siteRepository.save(providedSite);
+  }
+
+  async updateSite(
+    siteId: number,
+    countryId: number,
+    providedSite: Site
+  ): Promise<Site> {
+    const country = this.countryRepository.findOne({ id: countryId });
+
+    if (!country) {
+      throw new CountryNotFoundException(countryId);
+    }
+
+    const site = await this.getSiteById(siteId);
+
+    const updatedSite = { ...site, ...providedSite };
+
+    await this.siteRepository.save(updatedSite);
+
+    return await this.getSiteById(siteId);
+  }
+
+  async deleteSiteById(id: number): Promise<Site> {
+    const site = await this.getSiteById(id);
+
+    await this.siteRepository.delete({ id });
+
+    return site;
+  }
 }

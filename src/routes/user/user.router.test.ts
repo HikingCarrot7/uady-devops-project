@@ -1,10 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
-import { UserService } from '../../services/site/user.service';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { UserService } from '../../services/user/user.service';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 import { UserRouter } from './user.router';
-
 
 let mockUserService: MockProxy<UserService>;
 let userRouter: any;
@@ -29,10 +28,10 @@ describe('getAllUsers endpoint', () => {
 
     expect(mockUserService.getAllUsers).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({'users': []});
+    expect(mockRes.json).toHaveBeenCalledWith([]);
   });
 
-  test('get all users should return 500 http status if typeorm can´t connect to mysql', async () => {
+  test("get all users should return 500 http status if typeorm can't connect to mysql", async () => {
     mockUserService.getAllUsers.mockReturnValueOnce(Promise.reject({}));
 
     const mockReq = getMockReq();
@@ -41,9 +40,9 @@ describe('getAllUsers endpoint', () => {
     await userRouter.routes.getAllUsers(mockReq, mockRes);
 
     expect(mockUserService.getAllUsers).toHaveBeenCalledTimes(1);
-    expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({error: {}});
-  });  
+    expect(mockRes.sendStatus).toHaveBeenCalledWith(500);
+    expect(mockRes.json).not.toBeCalled();
+  });
 });
 
 describe('getUserById endpoint', () => {
@@ -57,18 +56,15 @@ describe('getUserById endpoint', () => {
       password: 'password',
     };
 
-    mockUserService.getUserById.mockImplementation(
-      async (userId: string) => {
-        if (!isValidId(userId)) {
-          return Promise.reject(invalidIdMsg(userId));
-        }
-
-        if (userId == user.id)
-          return Promise.resolve(user as User);
-
-        return Promise.resolve(null as unknown as User);
+    mockUserService.getUserById.mockImplementation(async (userId) => {
+      if (!isNumericId(userId)) {
+        return Promise.reject(invalidIdMsg(userId));
       }
-    );
+
+      if (userId == user.id) return Promise.resolve(user as User);
+
+      return Promise.resolve(null as unknown as User);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -79,10 +75,10 @@ describe('getUserById endpoint', () => {
 
     expect(mockUserService.getUserById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockRes.json).toBeCalledWith({user});
+    expect(mockRes.json).toBeCalledWith(user);
   });
 
-  test('should return 400 http status code if the user id is invalid', async () => {
+  test('should return 500 http status code if the user id is invalid', async () => {
     const userId = 'abc';
 
     const user = {
@@ -92,18 +88,15 @@ describe('getUserById endpoint', () => {
       password: 'password',
     };
 
-    mockUserService.getUserById.mockImplementation(
-      async (userId: string) => {
-        if (!isValidId(userId)) {
-          return Promise.reject(invalidIdMsg(userId));
-        }
-
-        if (userId == user.id)
-          return Promise.resolve(user as User);
-
-        return Promise.resolve(null as unknown as User);
+    mockUserService.getUserById.mockImplementation(async (userId) => {
+      if (!isNumericId(userId)) {
+        return Promise.reject(invalidIdMsg(userId));
       }
-    );
+
+      if (userId == user.id) return Promise.resolve(user as User);
+
+      return Promise.resolve(null as unknown as User);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -113,8 +106,8 @@ describe('getUserById endpoint', () => {
     await userRouter.routes.getUserById(mockReq, mockRes);
 
     expect(mockUserService.getUserById).toBeCalledTimes(1);
-    expect(mockRes.status).toBeCalledWith(400);
-    expect(mockRes.json).toBeCalledWith({ 'error': invalidIdMsg(userId)});
+    expect(mockRes.sendStatus).toBeCalledWith(500);
+    expect(mockRes.json).not.toBeCalled();
   });
 });
 
@@ -126,14 +119,12 @@ describe('createUser endpoint', () => {
       password: 'password',
     };
 
-    mockUserService.createUser.mockImplementation(
-      () => {
-        return Promise.resolve({
-          id: 1,
-          ...reqBody,
-        } as unknown as User);
-      }
-    );
+    mockUserService.createUser.mockImplementation(() => {
+      return Promise.resolve({
+        id: 1,
+        ...reqBody,
+      } as unknown as User);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
@@ -144,52 +135,47 @@ describe('createUser endpoint', () => {
 
     expect(mockUserService.createUser).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith({ user: {id: 1, ...reqBody} });
-  });  
+    expect(mockRes.json).toHaveBeenCalledWith({ id: 1, ...reqBody });
+  });
 });
 
 describe('updateUser endpoint', () => {
   test('should return 200 http status code when a user is updated', async () => {
-    const userId = '1';
+    const userId = 1;
 
     const reqBody = {
       email: 'newmail@gmail.com',
     };
 
     const originalUser = {
-      id: parseInt(userId),
+      id: userId,
       name: 'User1',
       email: 'user@gmail.com',
       password: 'password',
     };
 
     const updatedUser = {
-      id: parseInt(userId),
+      id: userId,
       name: 'User1',
       email: 'newmail@gmail.com',
       password: 'password',
     };
 
-    mockUserService.updateUser.mockImplementation(
-      (userId: string, newUser: User) => {
-        return Promise.resolve({...originalUser, ...newUser} as User);
-      }
-    );
+    mockUserService.updateUser.mockImplementation((userId, newUser) => {
+      return Promise.resolve({ ...originalUser, ...newUser } as User);
+    });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = userId;
+    mockReq.params.id = `${userId}`;
     mockReq.body = reqBody;
 
     await userRouter.routes.updateUser(mockReq, mockRes);
 
     expect(mockUserService.updateUser).toHaveBeenCalledTimes(1);
-    expect(mockUserService.updateUser).toHaveBeenCalledWith(
-      userId,
-      reqBody
-    );
+    expect(mockUserService.updateUser).toHaveBeenCalledWith(userId, reqBody);
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({user: updatedUser});
+    expect(mockRes.json).toHaveBeenCalledWith(updatedUser);
   });
 });

@@ -1,79 +1,130 @@
-import { Request, Response, Router } from 'express';
+import { classToPlain } from 'class-transformer';
+import express, { Response } from 'express';
+import { MyContext } from '../../middleware/auth.middleware';
+import { validateParamsId } from '../../middleware/validate_id_format.middleware';
+import {
+  EmailAlreadyTakenException,
+  UserNotFoundException,
+} from '../../services/user/user.exceptions';
 import { UserService } from '../../services/user/user.service';
+import { serializeError } from '../../utils/serializeError';
 import { validate } from '../../utils/validation';
 import { User } from './../../entities/user.entity';
+import { UpdateUserRequest } from './update-user.request';
 import { UserRequest } from './user.request';
 
 export const UserRouter = (userService: UserService) => {
-  const getAllUsers = async (req: Request, res: Response) => {
+  const getAllUsers = async (req: MyContext, res: Response) => {
     try {
-      return res.status(200).json({ users: await userService.getAllUsers() });
-    } catch(error) {
-      return res.status(500).json({ error });
+      const users = await userService.getAllUsers();
+
+      return res.status(200).json(classToPlain(users));
+    } catch {
+      return res.sendStatus(500);
     }
   };
 
-  const getUserById = async (req: Request, res: Response) => {
-    const userId = req.params.id;
+  const getUserById = async (req: MyContext, res: Response) => {
+    const userId = parseInt(req.params.id);
 
     try {
-      return res
-        .status(200)
-        .json({ user: await userService.getUserById(userId) });
+      const user = await userService.getUserById(userId);
+
+      return res.status(200).json(classToPlain(user));
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof UserNotFoundException) {
+        return res.status(404).json(serializeError(error.message));
+      }
+
+      return res.sendStatus(500);
     }
   };
 
-  const createUser = async (req: Request, res: Response) => {
-    const userRequest = req.body as UserRequest;
+  const createUser = async (req: MyContext, res: Response) => {
+    const userRequest = req.body;
 
     try {
-      const newUser = await userService.createUser(
-        new User({ ...userRequest })
-      );
+      const newUser = await userService.createUser(new User(userRequest));
 
-      return res.status(201).json({ user: newUser });
+      return res.status(201).json(classToPlain(newUser));
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof EmailAlreadyTakenException) {
+        return res.status(409).json(serializeError(error.message));
+      }
+
+      return res.sendStatus(500);
     }
   };
 
-  const updateUser = async (req: Request, res: Response) => {
-    const userId = req.params.id;
-    const userData = req.body;
+  const updateSelf = async (req: MyContext, res: Response) => {
+    if (req.userId) {
+      req.params.id = `${req.userId}`;
+      return updateUser(req, res);
+    }
+
+    return res.sendStatus(500);
+  };
+
+  const updateUser = async (req: MyContext, res: Response) => {
+    const userId = parseInt(req.params.id);
+    const providedUser = req.body;
+
     try {
-      return res
-        .status(200)
-        .json({ user: await userService.updateUser(userId, userData) });
+      const updatedUser = await userService.updateUser(userId, providedUser);
+
+      return res.status(200).json(classToPlain(updatedUser));
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof UserNotFoundException) {
+        return res.status(404).json(serializeError(error.message));
+      }
+
+      if (error instanceof EmailAlreadyTakenException) {
+        return res.status(409).json(serializeError(error.message));
+      }
+
+      return res.sendStatus(500);
     }
   };
 
-  const deleteUser = async (req: Request, res: Response) => {
-    const userId = req.params.id;
+  const deleteSelf = async (req: MyContext, res: Response) => {
+    if (req.userId) {
+      req.params.id = `${req.userId}`;
+      return deleteUser(req, res);
+    }
+
+    return res.sendStatus(500);
+  };
+
+  const deleteUser = async (req: MyContext, res: Response) => {
+    const userId = parseInt(req.params.id);
+
     try {
-      return res
-        .status(200)
-        .json({ user: await userService.deleteUserById(userId) });
+      const deletedUser = await userService.deleteUserById(userId);
+
+      return res.status(200).json(classToPlain(deletedUser));
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof UserNotFoundException) {
+        return res.status(404).json(serializeError(error.message));
+      }
+
+      return res.sendStatus(500);
     }
   };
 
-  const router = Router();
+  const router = express.Router();
 
   router
     .route('/users')
     .get(getAllUsers)
-    .post(validate(UserRequest), createUser);
+    .post(validate(UserRequest), createUser)
+    .put(validate(UpdateUserRequest), updateSelf)
+    .delete(deleteSelf);
 
   router
     .route('/users/:id')
-    .get(getUserById)
-    .delete(deleteUser)
-    .put(validate(UserRequest), updateUser);
+    .get(validateParamsId, getUserById)
+    .put(validateParamsId, validate(UpdateUserRequest), updateUser)
+    .delete(validateParamsId, deleteUser);
 
   return {
     router,
@@ -83,6 +134,6 @@ export const UserRouter = (userService: UserService) => {
       createUser,
       updateUser,
       deleteUser,
-    }
+    },
   };
 };

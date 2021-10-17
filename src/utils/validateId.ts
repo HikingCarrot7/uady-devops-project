@@ -1,6 +1,6 @@
 import { Constructor } from './validation';
 
-export const isValidId = (id: number | string): id is number => {
+export const isNumericId = (id: number | string): id is number => {
   if (typeof id === 'number') {
     return !isNaN(id);
   }
@@ -13,8 +13,8 @@ export const invalidIdMsg = <T>(
   entity?: Constructor<T>
 ) => {
   if (entity) {
-    return `El Id: ${id} para la entidad: ${entity.name} es inválido`;
+    return `El formato para el Id: ${id} para la entidad: ${entity.name} es inválido`;
   }
 
-  return `El Id ${id} es inválido`;
+  return `El formato para el Id ${id} es inválido`;
 };

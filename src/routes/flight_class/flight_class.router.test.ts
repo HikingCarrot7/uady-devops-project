@@ -3,7 +3,7 @@ import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { DeleteResult } from 'typeorm';
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightClassService } from '../../services/flight_class/flight_class.service';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 import { FlightClassRouter } from './flight_class.router';
 
 let mockFlightClassService: MockProxy<FlightClassService>;
@@ -45,7 +45,7 @@ describe('getFlightClassById endpoint', () => {
 
     mockFlightClassService.getFlightClassById.mockImplementation(
       async (flightClassId) => {
-        if (!isValidId(flightClassId)) {
+        if (!isNumericId(flightClassId)) {
           return Promise.reject(invalidIdMsg(flightClassId));
         }
 

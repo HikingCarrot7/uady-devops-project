@@ -1,12 +1,12 @@
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketRepository } from '../../repositories/flight_ticket.repository';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 
 export class FlightTicketService {
   constructor(private flightTicketRepo: FlightTicketRepository) {}
 
   getUserFlightTickets = async (userId: number | string) => {
-    if (!isValidId(userId)) {
+    if (!isNumericId(userId)) {
       return Promise.reject(invalidIdMsg(userId));
     }
 
@@ -16,7 +16,7 @@ export class FlightTicketService {
   };
 
   getFlightTicketById = async (tickedId: number | string) => {
-    if (!isValidId(tickedId)) {
+    if (!isNumericId(tickedId)) {
       return Promise.reject(invalidIdMsg(tickedId));
     }
 
@@ -47,7 +47,7 @@ export class FlightTicketService {
     ticketId: number | string,
     newFlightTicket: FlightTicket
   ) => {
-    if (!isValidId(ticketId)) {
+    if (!isNumericId(ticketId)) {
       return Promise.reject(invalidIdMsg(ticketId));
     }
 
@@ -64,7 +64,7 @@ export class FlightTicketService {
   };
 
   deleteFlightTicket = async (ticketId: number | string) => {
-    if (!isValidId(ticketId)) {
+    if (!isNumericId(ticketId)) {
       return Promise.reject(invalidIdMsg(ticketId));
     }
 

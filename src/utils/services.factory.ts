@@ -1,4 +1,5 @@
 import { getCustomRepository } from 'typeorm';
+import { CountryRepository } from '../repositories/country.repository';
 import { FlightRepository } from '../repositories/flight.repository';
 import { FlightClassRepository } from '../repositories/flight_class.repository';
 import { FlightTicketRepository } from '../repositories/flight_ticket.repository';
@@ -12,19 +13,11 @@ import { SiteService } from '../services/site/site.service';
 import { UserService } from '../services/user/user.service';
 
 export const createDefaultServices = () => {
-  const userService = new UserService(getCustomRepository(UserRepository));
-
-  const authService = new AuthService(userService);
-
-  const flightTicketService = new FlightTicketService(
-    getCustomRepository(FlightTicketRepository)
-  );
-
-  const siteService = new SiteService(getCustomRepository(SiteRepository));
-
-  const flightService = new FlightService(
-    getCustomRepository(FlightRepository)
-  );
+  const userService = createDefaultUserService();
+  const authService = createDefaultAuthService(userService);
+  const siteService = createDefaultSiteService();
+  const flightTicketService = createDefaultFlightTicketService();
+  const flightService = createDefaultFlightService();
 
   const flightClassService = new FlightClassService(
     getCustomRepository(FlightClassRepository)
@@ -38,4 +31,27 @@ export const createDefaultServices = () => {
     flightService,
     flightClassService,
   };
+};
+
+export const createDefaultAuthService = (userService: UserService) => {
+  return new AuthService(userService);
+};
+
+export const createDefaultUserService = () => {
+  return new UserService(getCustomRepository(UserRepository));
+};
+
+export const createDefaultSiteService = () => {
+  return new SiteService(
+    getCustomRepository(SiteRepository),
+    getCustomRepository(CountryRepository)
+  );
+};
+
+export const createDefaultFlightTicketService = () => {
+  return new FlightTicketService(getCustomRepository(FlightTicketRepository));
+};
+
+export const createDefaultFlightService = () => {
+  return new FlightService(getCustomRepository(FlightRepository));
 };
