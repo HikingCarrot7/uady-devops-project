@@ -1,6 +1,7 @@
 import { classToPlain } from 'class-transformer';
-import { Response, Router } from 'express';
+import express, { Response } from 'express';
 import { MyContext } from '../../middleware/auth.middleware';
+import { validateParamsId } from '../../middleware/validate_id_format.middleware';
 import {
   EmailAlreadyTakenException,
   UserNotFoundException,
@@ -24,7 +25,7 @@ export const UserRouter = (userService: UserService) => {
   };
 
   const getUserById = async (req: MyContext, res: Response) => {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
 
     try {
       const user = await userService.getUserById(userId);
@@ -65,7 +66,7 @@ export const UserRouter = (userService: UserService) => {
   };
 
   const updateUser = async (req: MyContext, res: Response) => {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
     const providedUser = req.body;
 
     try {
@@ -95,7 +96,7 @@ export const UserRouter = (userService: UserService) => {
   };
 
   const deleteUser = async (req: MyContext, res: Response) => {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
 
     try {
       const deletedUser = await userService.deleteUserById(userId);
@@ -110,7 +111,7 @@ export const UserRouter = (userService: UserService) => {
     }
   };
 
-  const router = Router();
+  const router = express.Router();
 
   router
     .route('/users')
@@ -121,9 +122,9 @@ export const UserRouter = (userService: UserService) => {
 
   router
     .route('/users/:id')
-    .get(getUserById)
-    .put(validate(UpdateUserRequest), updateUser)
-    .delete(deleteUser);
+    .get(validateParamsId, getUserById)
+    .put(validateParamsId, validate(UpdateUserRequest), updateUser)
+    .delete(validateParamsId, deleteUser);
 
   return {
     router,

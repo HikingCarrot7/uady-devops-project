@@ -1,7 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { User } from '../../entities/user.entity';
 import { UserRepository } from '../../repositories/user.repository';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
 import {
   EmailAlreadyTakenException,
   UserNotFoundException,
@@ -10,15 +9,11 @@ import {
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  getAllUsers = async (): Promise<User[]> => {
+  async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find();
-  };
+  }
 
-  getUserById = async (id: number | string): Promise<User> => {
-    if (!isValidId(id)) {
-      return Promise.reject(invalidIdMsg(id));
-    }
-
+  async getUserById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({ id });
 
     if (!user) {
@@ -26,19 +21,19 @@ export class UserService {
     }
 
     return user;
-  };
+  }
 
-  getUserByEmail = async (email: string): Promise<User | undefined> => {
+  async getUserByEmail(email: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ email });
-  };
+  }
 
-  isEmailTaken = async (email: string) => {
+  async isEmailTaken(email: string) {
     const user = await this.getUserByEmail(email);
 
     return !!user;
-  };
+  }
 
-  createUser = async (user: User): Promise<User> => {
+  async createUser(user: User): Promise<User> {
     const emailTaken = await this.isEmailTaken(user.email);
 
     if (emailTaken) {
@@ -48,12 +43,9 @@ export class UserService {
     user.password = await this.hashPassword(user.password);
 
     return await this.userRepository.save(user);
-  };
+  }
 
-  updateUser = async (
-    id: number | string,
-    providedUser: User
-  ): Promise<User> => {
+  async updateUser(id: number, providedUser: User): Promise<User> {
     const actualUser = await this.getUserById(id);
     const userWithEmail = await this.getUserByEmail(providedUser.email);
 
@@ -78,21 +70,17 @@ export class UserService {
     await this.userRepository.save(updatedUser);
 
     return await this.getUserById(id);
-  };
+  }
 
-  deleteUserById = async (id: number | string): Promise<User> => {
-    if (!isValidId(id)) {
-      return Promise.reject(invalidIdMsg(id));
-    }
-
+  async deleteUserById(id: number): Promise<User> {
     const userToDelete = await this.getUserById(id);
 
     await this.userRepository.delete({ id });
 
     return userToDelete;
-  };
+  }
 
-  hashPassword = async (password: string) => {
+  async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
-  };
+  }
 }

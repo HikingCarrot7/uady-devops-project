@@ -2,27 +2,28 @@ import {
   BaseEntity,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
+import { Country } from './country.entity';
 import { Flight } from './flight.entity';
 
 @Entity({ name: 'sities' })
+@Unique(['city', 'state'])
 export class Site extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  country: string;
+  @ManyToOne((type) => Country, (country) => country.sites, { eager: true })
+  country: Country;
 
-  @Column()
+  @Column({ length: 50 })
   city: string;
 
-  @Column()
+  @Column({ length: 50 })
   state: string;
-
-  @Column()
-  code: number;
 
   @OneToMany((type) => Flight, (flight) => flight.takeOffSite)
   asTakeOffFlights: Flight[];

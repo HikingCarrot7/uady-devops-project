@@ -1,6 +1,6 @@
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightClassRepository } from '../../repositories/flight_class.repository';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 
 export class FlightClassService {
   constructor(private flightClassRepository: FlightClassRepository) {}
@@ -10,7 +10,7 @@ export class FlightClassService {
   };
 
   getFlightClassById = async (id: string) => {
-    if (!isValidId(id)) {
+    if (!isNumericId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 
@@ -22,7 +22,7 @@ export class FlightClassService {
   };
 
   deleteFlightClassById = async (id: string) => {
-    if (!isValidId(id)) {
+    if (!isNumericId(id)) {
       return Promise.reject(invalidIdMsg(id));
     }
 

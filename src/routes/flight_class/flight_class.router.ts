@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import express, { Request, Response } from 'express';
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightClassService } from '../../services/flight_class/flight_class.service';
 import { validate } from '../../utils/validation';
@@ -67,7 +67,7 @@ export const FlightClassRouter = (flightClassService: FlightClassService) => {
     }
   };
 
-  const router = Router();
+  const router = express.Router();
 
   router
     .route('/flights-classes')

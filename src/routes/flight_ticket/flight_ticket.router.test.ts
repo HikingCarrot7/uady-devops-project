@@ -2,7 +2,7 @@ import { getMockReq, getMockRes } from '@jest-mock/express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketService } from '../../services/flight_ticket/flight_ticket.service';
-import { invalidIdMsg, isValidId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validateId';
 import { FlightTicketRouter } from './flight_ticket.router';
 
 let mockFlightTicketService: MockProxy<FlightTicketService>;
@@ -74,7 +74,7 @@ describe('getFlightTicketById endpoint', () => {
 
     mockFlightTicketService.getFlightTicketById.mockImplementation(
       async (ticketId) => {
-        if (!isValidId(ticketId)) {
+        if (!isNumericId(ticketId)) {
           return Promise.reject(invalidIdMsg(ticketId));
         }
 

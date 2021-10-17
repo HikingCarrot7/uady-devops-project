@@ -38,10 +38,10 @@ export function validationError(
   res: express.Response,
   next: express.NextFunction
 ) {
-  if (err instanceof Array && err[0] instanceof ValidationError) {
+  if (Array.isArray(err) && err[0] instanceof ValidationError) {
     res
       .status(400)
-      .json({ errors: err.map((e) => e.constraints) })
+      .json({ errors: err.flatMap((e) => Object.values(e.constraints)) })
       .end();
   } else {
     next(err);

@@ -1,4 +1,4 @@
-import { Response, Router } from 'express';
+import express, { Response } from 'express';
 import { User } from '../../entities/user.entity';
 import { MyContext } from '../../middleware/auth.middleware';
 import { AuthService } from '../../services/auth/auth.service';
@@ -49,7 +49,7 @@ export const AuthRouter = (authService: AuthService) => {
     }
   };
 
-  const router = Router();
+  const router = express.Router();
 
   router.route('/register').post(validate(UserRequest), register);
   router.route('/login').post(validate(LoginRequest), login);
