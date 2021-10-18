@@ -1,8 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
+import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketService } from '../../services/flight_ticket/flight_ticket.service';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 import { FlightTicketRouter } from './flight_ticket.router';
 
 let mockFlightTicketService: MockProxy<FlightTicketService>;
@@ -10,7 +11,10 @@ let flightTicketRouter: any;
 
 beforeAll(() => {
   mockFlightTicketService = mock<FlightTicketService>();
-  flightTicketRouter = FlightTicketRouter(mockFlightTicketService);
+  flightTicketRouter = FlightTicketRouter(
+    express.Router(),
+    mockFlightTicketService
+  );
 });
 
 afterEach(() => {
@@ -28,7 +32,7 @@ describe('getUserFlightTickets endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await flightTicketRouter.routes.getUserFlightTickets(mockReq, mockRes);
+    await flightTicketRouter.getUserFlightTickets(mockReq, mockRes);
 
     expect(mockFlightTicketService.getUserFlightTickets).toHaveBeenCalledTimes(
       1
@@ -52,7 +56,7 @@ describe('getUserFlightTickets endpoint', () => {
 
     mockReq.params.id = userId;
 
-    await flightTicketRouter.routes.getUserFlightTickets(mockReq, mockRes);
+    await flightTicketRouter.getUserFlightTickets(mockReq, mockRes);
 
     expect(mockFlightTicketService.getUserFlightTickets).toHaveBeenCalledTimes(
       1
@@ -90,7 +94,7 @@ describe('getFlightTicketById endpoint', () => {
 
     mockReq.params.id = ticketId;
 
-    await flightTicketRouter.routes.getFlightTicketById(mockReq, mockRes);
+    await flightTicketRouter.getFlightTicketById(mockReq, mockRes);
 
     expect(mockFlightTicketService.getFlightTicketById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
@@ -121,7 +125,7 @@ describe('createFlightTicket endpoint', () => {
 
     mockReq.body = reqBody;
 
-    await flightTicketRouter.routes.createFlightTicket(mockReq, mockRes);
+    await flightTicketRouter.createFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.createFlightTicket).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
@@ -149,7 +153,7 @@ describe('updateFlightTicket endpoint', () => {
     mockReq.params.id = ticketId;
     mockReq.body = reqBody;
 
-    await flightTicketRouter.routes.updateFlightTicket(mockReq, mockRes);
+    await flightTicketRouter.updateFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledTimes(1);
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledWith(
@@ -174,8 +178,8 @@ describe('deleteFlightTicket endpoint', () => {
     const { res: mockRes } = getMockRes();
 
     mockReq.params.id = ticketId;
-
-    await flightTicketRouter.routes.deleteFlightTicket(mockReq, mockRes);
+  
+    await flightTicketRouter.deleteFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.deleteFlightTicket).toHaveBeenCalledTimes(1);
     expect(mockFlightTicketService.deleteFlightTicket).toHaveBeenCalledWith(

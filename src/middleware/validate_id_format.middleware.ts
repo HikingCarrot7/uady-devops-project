@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { serializeError } from '../utils/serializeError';
-import { invalidIdMsg } from '../utils/validateId';
+import { serializeError } from '../utils/serialize_error';
+import { invalidIdMsg } from '../utils/validate_id';
 
-export const validateParamsId = (
+export const validateParamId = (
   req: Request,
   res: Response,
   next: NextFunction

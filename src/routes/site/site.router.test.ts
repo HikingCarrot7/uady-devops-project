@@ -1,8 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
+import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Site } from '../../entities/site.entity';
 import { SiteService } from '../../services/site/site.service';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 import { SiteRouter } from './site.router';
 
 let mockSiteService: MockProxy<SiteService>;
@@ -10,7 +11,7 @@ let siteRouter: any;
 
 beforeAll(() => {
   mockSiteService = mock<SiteService>();
-  siteRouter = SiteRouter(mockSiteService);
+  siteRouter = SiteRouter(express.Router(), mockSiteService);
 });
 
 afterEach(() => {
@@ -24,7 +25,7 @@ describe('getAllSites endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await siteRouter.routes.getAllSites(mockReq, mockRes);
+    await siteRouter.getAllSites(mockReq, mockRes);
 
     expect(mockSiteService.getAllSites).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -37,11 +38,11 @@ describe('getAllSites endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await siteRouter.routes.getAllSites(mockReq, mockRes);
+    await siteRouter.getAllSites(mockReq, mockRes);
 
     expect(mockSiteService.getAllSites).toHaveBeenCalledTimes(1);
-    expect(mockRes.sendStatus).toHaveBeenCalledWith(500);
-    expect(mockRes.json).not.toBeCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toBeCalled();
   });
 });
 
@@ -67,7 +68,7 @@ describe('getSiteById endpoint', () => {
 
     mockReq.params.id = siteId;
 
-    await siteRouter.routes.getSiteById(mockReq, mockRes);
+    await siteRouter.getSiteById(mockReq, mockRes);
 
     expect(mockSiteService.getSiteById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
@@ -99,11 +100,11 @@ describe('getSiteById endpoint', () => {
 
     mockReq.params.id = siteId;
 
-    await siteRouter.routes.getSiteById(mockReq, mockRes);
+    await siteRouter.getSiteById(mockReq, mockRes);
 
     expect(mockSiteService.getSiteById).toBeCalledTimes(1);
-    expect(mockRes.sendStatus).toBeCalledWith(500);
-    expect(mockRes.json).not.toBeCalled();
+    expect(mockRes.status).toBeCalledWith(500);
+    expect(mockRes.json).toBeCalled();
   });
 });
 
@@ -127,7 +128,7 @@ describe('createSite endpoint', () => {
 
     mockReq.body = reqBody;
 
-    await siteRouter.routes.createSite(mockReq, mockRes);
+    await siteRouter.createSite(mockReq, mockRes);
 
     expect(mockSiteService.createSite).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
@@ -164,7 +165,7 @@ describe('updateSite endpoint', () => {
     mockReq.params.id = `${siteId}`;
     mockReq.body = providedSite;
 
-    await siteRouter.routes.updateSite(mockReq, mockRes);
+    await siteRouter.updateSite(mockReq, mockRes);
 
     expect(mockSiteService.updateSite).toHaveBeenCalledTimes(1);
 
@@ -194,7 +195,7 @@ describe('deleteSite endpoint', () => {
 
     mockReq.params.id = siteId;
 
-    await siteRouter.routes.deleteSiteById(mockReq, mockRes);
+    await siteRouter.deleteSite(mockReq, mockRes);
 
     expect(mockSiteService.deleteSiteById).toHaveBeenCalledTimes(1);
     expect(mockSiteService.deleteSiteById).toHaveBeenCalledWith(1);

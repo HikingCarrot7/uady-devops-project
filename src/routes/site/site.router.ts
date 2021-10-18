@@ -1,123 +1,121 @@
-import express, { Request, Response } from 'express';
-import { validateParamsId } from '../../middleware/validate_id_format.middleware';
+import { Request, Response, Router } from 'express';
+import { Loggable } from '../../middleware/loggable.middleware';
 import {
   CountryNotFoundException,
   SiteNotFoundException,
 } from '../../services/site/site.exceptions';
 import { SiteService } from '../../services/site/site.service';
-import { serializeError } from '../../utils/serializeError';
+import { serializeError } from '../../utils/serialize_error';
 import { validate } from '../../utils/validation';
 import { Site } from './../../entities/site.entity';
 import { SiteRequest } from './site.request';
-import { UpdateSiteRequest } from './update-site.request';
+import { UpdateSiteRequest } from './update_site.request';
 
-export const SiteRouter = (siteService: SiteService) => {
-  const getAllSites = async (req: Request, res: Response) => {
-    try {
-      const sites = await siteService.getAllSites();
+export const SiteRouter = (router: Router, siteService: SiteService) => {
+  class SiteRouterClass {
+    constructor() {
+      router
+        .route('/sites')
+        .get(this.getAllSites)
+        .post(validate(SiteRequest), this.createSite);
 
-      return res.status(200).json(sites);
-    } catch (error) {
-      return res.sendStatus(500);
+      router
+        .route('/sites/:id')
+        .get(this.getSiteById)
+        .delete(this.deleteSite)
+        .put(validate(UpdateSiteRequest), this.updateSite);
     }
-  };
 
-  const getSiteById = async (req: Request, res: Response) => {
-    const siteId = parseInt(req.params.id);
+    @Loggable
+    async getAllSites(req: Request, res: Response) {
+      try {
+        const sites = await siteService.getAllSites();
 
-    try {
-      const site = await siteService.getSiteById(siteId);
-
-      return res.status(200).json(site);
-    } catch (error) {
-      if (error instanceof SiteNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
+        return res.status(200).json(sites);
+      } catch (error) {
+        return res.status(500).json(serializeError(error));
       }
-
-      return res.sendStatus(500);
     }
-  };
 
-  const createSite = async (req: Request, res: Response) => {
-    const { countryId, ...siteRequest } = req.body;
+    @Loggable
+    async getSiteById(req: Request, res: Response) {
+      const siteId = parseInt(req.params.id);
 
-    try {
-      const newSite = await siteService.createSite(
-        countryId,
-        new Site(siteRequest)
-      );
+      try {
+        const site = await siteService.getSiteById(siteId);
 
-      return res.status(201).json(newSite);
-    } catch (error) {
-      if (error instanceof CountryNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
+        return res.status(200).json(site);
+      } catch (error) {
+        if (error instanceof SiteNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
-
-      return res.sendStatus(500);
     }
-  };
 
-  const updateSite = async (req: Request, res: Response) => {
-    const siteId = parseInt(req.params.id);
-    const { countryId, ...providedSite } = req.body;
+    @Loggable
+    async createSite(req: Request, res: Response) {
+      const { countryId, ...siteRequest } = req.body;
 
-    try {
-      const newSite = await siteService.updateSite(
-        siteId,
-        countryId,
-        providedSite
-      );
+      try {
+        const newSite = await siteService.createSite(
+          countryId,
+          new Site(siteRequest)
+        );
 
-      return res.status(200).json(newSite);
-    } catch (error) {
-      if (
-        error instanceof CountryNotFoundException ||
-        error instanceof SiteNotFoundException
-      ) {
-        return res.status(404).json(serializeError(error.message));
+        return res.status(201).json(newSite);
+      } catch (error) {
+        if (error instanceof CountryNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
-
-      return res.sendStatus(500);
     }
-  };
 
-  const deleteSite = async (req: Request, res: Response) => {
-    const siteId = parseInt(req.params.id);
+    @Loggable
+    async updateSite(req: Request, res: Response) {
+      const siteId = parseInt(req.params.id);
+      const { countryId, ...providedSite } = req.body;
 
-    try {
-      const deletedSite = await siteService.deleteSiteById(siteId);
+      try {
+        const newSite = await siteService.updateSite(
+          siteId,
+          countryId,
+          providedSite
+        );
 
-      return res.status(200).json(deletedSite);
-    } catch (error) {
-      if (error instanceof SiteNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
+        return res.status(200).json(newSite);
+      } catch (error) {
+        if (
+          error instanceof CountryNotFoundException ||
+          error instanceof SiteNotFoundException
+        ) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
-
-      return res.sendStatus(500);
     }
-  };
 
-  const router = express.Router();
+    @Loggable
+    async deleteSite(req: Request, res: Response) {
+      const siteId = parseInt(req.params.id);
 
-  router
-    .route('/sites')
-    .get(getAllSites)
-    .post(validate(SiteRequest), createSite);
+      try {
+        const deletedSite = await siteService.deleteSiteById(siteId);
 
-  router
-    .route('/sites/:id')
-    .get(validateParamsId, getSiteById)
-    .delete(validateParamsId, deleteSite)
-    .put(validateParamsId, validate(UpdateSiteRequest), updateSite);
+        return res.status(200).json(deletedSite);
+      } catch (error) {
+        if (error instanceof SiteNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
 
-  return {
-    router,
-    routes: {
-      getAllSites,
-      getSiteById,
-      createSite,
-      deleteSiteById: deleteSite,
-      updateSite,
-    },
-  };
+        return res.status(500).json(serializeError(error));
+      }
+    }
+  }
+
+  return new SiteRouterClass();
 };

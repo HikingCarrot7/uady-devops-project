@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserNotFoundException } from '../services/user/user.exceptions';
 import { UserService } from '../services/user/user.service';
-import { serializeError } from '../utils/serializeError';
+import { serializeError } from '../utils/serialize_error';
 
 // No sé donde poner esto, ni el nombre que podría tener. @Shadic78
 export interface MyContext extends Request {

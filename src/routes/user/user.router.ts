@@ -1,139 +1,141 @@
 import { classToPlain } from 'class-transformer';
-import express, { Response } from 'express';
+import { Response, Router } from 'express';
 import { MyContext } from '../../middleware/auth.middleware';
-import { validateParamsId } from '../../middleware/validate_id_format.middleware';
+import { Loggable } from '../../middleware/loggable.middleware';
 import {
   EmailAlreadyTakenException,
   UserNotFoundException,
 } from '../../services/user/user.exceptions';
 import { UserService } from '../../services/user/user.service';
-import { serializeError } from '../../utils/serializeError';
+import { serializeError } from '../../utils/serialize_error';
 import { validate } from '../../utils/validation';
 import { User } from './../../entities/user.entity';
-import { UpdateUserRequest } from './update-user.request';
+import { UpdateUserRequest } from './update_user.request';
 import { UserRequest } from './user.request';
 
-export const UserRouter = (userService: UserService) => {
-  const getAllUsers = async (req: MyContext, res: Response) => {
-    try {
-      const users = await userService.getAllUsers();
+export const UserRouter = (router: Router, userService: UserService) => {
+  class UserRouterClass {
+    constructor() {
+      router
+        .route('/users')
+        .get(this.getAllUsers)
+        .post(validate(UserRequest), this.createUser)
+        .put(validate(UpdateUserRequest), this.updateSelf)
+        .delete(this.deleteSelf);
 
-      return res.status(200).json(classToPlain(users));
-    } catch {
-      return res.sendStatus(500);
+      router
+        .route('/users/:id')
+        .get(this.getUserById)
+        .put(validate(UpdateUserRequest), this.updateUser)
+        .delete(this.deleteUser);
     }
-  };
 
-  const getUserById = async (req: MyContext, res: Response) => {
-    const userId = parseInt(req.params.id);
+    @Loggable
+    async getAllUsers(req: MyContext, res: Response) {
+      try {
+        const users = await userService.getAllUsers();
 
-    try {
-      const user = await userService.getUserById(userId);
+        return res.status(200).json(classToPlain(users));
+      } catch (error) {
+        return res.status(500).json(serializeError(error));
+      }
+    }
 
-      return res.status(200).json(classToPlain(user));
-    } catch (error) {
-      if (error instanceof UserNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
+    @Loggable
+    async getUserById(req: MyContext, res: Response) {
+      const userId = parseInt(req.params.id);
+
+      try {
+        const user = await userService.getUserById(userId);
+
+        return res.status(200).json(classToPlain(user));
+      } catch (error) {
+        if (error instanceof UserNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
+      }
+    }
+
+    @Loggable
+    async createUser(req: MyContext, res: Response) {
+      const userRequest = req.body;
+
+      try {
+        const newUser = await userService.createUser(new User(userRequest));
+
+        return res.status(201).json(classToPlain(newUser));
+      } catch (error) {
+        if (error instanceof EmailAlreadyTakenException) {
+          return res.status(409).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
+      }
+    }
+
+    @Loggable
+    async updateSelf(req: MyContext, res: Response) {
+      if (req.userId) {
+        req.params.id = `${req.userId}`;
+        return this.updateUser(req, res);
       }
 
-      return res.sendStatus(500);
+      // No debería llegar aquí
+      return res.sendStatus(400);
     }
-  };
 
-  const createUser = async (req: MyContext, res: Response) => {
-    const userRequest = req.body;
+    @Loggable
+    async updateUser(req: MyContext, res: Response) {
+      const userId = parseInt(req.params.id);
+      const providedUser = req.body;
 
-    try {
-      const newUser = await userService.createUser(new User(userRequest));
+      try {
+        const updatedUser = await userService.updateUser(userId, providedUser);
 
-      return res.status(201).json(classToPlain(newUser));
-    } catch (error) {
-      if (error instanceof EmailAlreadyTakenException) {
-        return res.status(409).json(serializeError(error.message));
+        return res.status(200).json(classToPlain(updatedUser));
+      } catch (error) {
+        if (error instanceof UserNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        if (error instanceof EmailAlreadyTakenException) {
+          return res.status(409).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
+      }
+    }
+
+    @Loggable
+    async deleteSelf(req: MyContext, res: Response) {
+      if (req.userId) {
+        req.params.id = `${req.userId}`;
+        return this.deleteUser(req, res);
       }
 
-      return res.sendStatus(500);
-    }
-  };
-
-  const updateSelf = async (req: MyContext, res: Response) => {
-    if (req.userId) {
-      req.params.id = `${req.userId}`;
-      return updateUser(req, res);
+      // No debería llegar aquí
+      return res.sendStatus(400);
     }
 
-    return res.sendStatus(500);
-  };
+    @Loggable
+    async deleteUser(req: MyContext, res: Response) {
+      const userId = parseInt(req.params.id);
 
-  const updateUser = async (req: MyContext, res: Response) => {
-    const userId = parseInt(req.params.id);
-    const providedUser = req.body;
+      try {
+        const deletedUser = await userService.deleteUserById(userId);
 
-    try {
-      const updatedUser = await userService.updateUser(userId, providedUser);
+        return res.status(200).json(classToPlain(deletedUser));
+      } catch (error) {
+        if (error instanceof UserNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
 
-      return res.status(200).json(classToPlain(updatedUser));
-    } catch (error) {
-      if (error instanceof UserNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
+        return res.status(500).json(serializeError(error));
       }
-
-      if (error instanceof EmailAlreadyTakenException) {
-        return res.status(409).json(serializeError(error.message));
-      }
-
-      return res.sendStatus(500);
     }
-  };
+  }
 
-  const deleteSelf = async (req: MyContext, res: Response) => {
-    if (req.userId) {
-      req.params.id = `${req.userId}`;
-      return deleteUser(req, res);
-    }
-
-    return res.sendStatus(500);
-  };
-
-  const deleteUser = async (req: MyContext, res: Response) => {
-    const userId = parseInt(req.params.id);
-
-    try {
-      const deletedUser = await userService.deleteUserById(userId);
-
-      return res.status(200).json(classToPlain(deletedUser));
-    } catch (error) {
-      if (error instanceof UserNotFoundException) {
-        return res.status(404).json(serializeError(error.message));
-      }
-
-      return res.sendStatus(500);
-    }
-  };
-
-  const router = express.Router();
-
-  router
-    .route('/users')
-    .get(getAllUsers)
-    .post(validate(UserRequest), createUser)
-    .put(validate(UpdateUserRequest), updateSelf)
-    .delete(deleteSelf);
-
-  router
-    .route('/users/:id')
-    .get(validateParamsId, getUserById)
-    .put(validateParamsId, validate(UpdateUserRequest), updateUser)
-    .delete(validateParamsId, deleteUser);
-
-  return {
-    router,
-    routes: {
-      getAllUsers,
-      getUserById,
-      createUser,
-      updateUser,
-      deleteUser,
-    },
-  };
+  return new UserRouterClass();
 };

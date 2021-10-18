@@ -3,7 +3,7 @@ import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { DeleteResult } from 'typeorm';
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightClassService } from '../../services/flight_class/flight_class.service';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 import { FlightClassRouter } from './flight_class.router';
 
 let mockFlightClassService: MockProxy<FlightClassService>;

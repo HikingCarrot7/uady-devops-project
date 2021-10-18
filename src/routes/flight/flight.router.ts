@@ -1,91 +1,90 @@
-import express, { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { Flight } from '../../entities/flight.entity';
+import { Loggable } from '../../middleware/loggable.middleware';
 import { FlightService } from '../../services/flight/flight.service';
 import { validate } from '../../utils/validation';
 import { FlightRequest } from './flight.request';
 
-export const FlightRouter = (flightService: FlightService) => {
-  const getAllFlights = async (req: Request, res: Response) => {
-    return res
-      .status(200)
-      .json({ flights: await flightService.getAllFlights() });
-  };
+export const FlightRouter = (router: Router, flightService: FlightService) => {
+  class FlightRouterClass {
+    constructor() {
+      router
+        .route('/flights')
+        .get(this.getAllFlights)
+        .post(validate(FlightRequest), this.createFlight);
 
-  const getFlightById = async (req: Request, res: Response) => {
-    const flightId = req.params.id;
+      router
+        .route('/flights/:id')
+        .get(this.getFlightById)
+        .delete(this.deleteFlightById)
+        .put(validate(FlightRequest), this.updateFlight);
+    }
 
-    try {
+    @Loggable
+    async getAllFlights(req: Request, res: Response) {
       return res
         .status(200)
-        .json({ flight: await flightService.getFlightById(flightId) });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ error });
+        .json({ flights: await flightService.getAllFlights() });
     }
-  };
 
-  const createFlight = async (req: Request, res: Response) => {
-    const flightRequest = req.body as FlightRequest;
+    @Loggable
+    async getFlightById(req: Request, res: Response) {
+      const flightId = req.params.id;
 
-    try {
-      const newFlight = await flightService.createFlight(
-        new Flight({ ...flightRequest })
-      );
-
-      return res.status(201).json({ flight: newFlight });
-    } catch (error) {
-      return res.status(400).json({ error });
+      try {
+        return res
+          .status(200)
+          .json({ flight: await flightService.getFlightById(flightId) });
+      } catch (error) {
+        console.log(error);
+        return res.status(400).json({ error });
+      }
     }
-  };
 
-  const deleteFlightById = async (req: Request, res: Response) => {
-    const flightId = req.params.id;
+    @Loggable
+    async createFlight(req: Request, res: Response) {
+      const flightRequest = req.body as FlightRequest;
 
-    try {
-      return res
-        .status(200)
-        .json({ flight: await flightService.deleteFlightById(flightId) });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ error });
+      try {
+        const newFlight = await flightService.createFlight(
+          new Flight({ ...flightRequest })
+        );
+
+        return res.status(201).json({ flight: newFlight });
+      } catch (error) {
+        return res.status(400).json({ error });
+      }
     }
-  };
 
-  const updateFlight = async (req: Request, res: Response) => {
-    const flightId = req.params.id;
-    const flightData = req.body;
+    @Loggable
+    async deleteFlightById(req: Request, res: Response) {
+      const flightId = req.params.id;
 
-    try {
-      return res.status(200).json({
-        flight: await flightService.updateFlight(flightId, flightData),
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ error });
+      try {
+        return res
+          .status(200)
+          .json({ flight: await flightService.deleteFlightById(flightId) });
+      } catch (error) {
+        console.log(error);
+        return res.status(400).json({ error });
+      }
     }
-  };
 
-  const router = express.Router();
+    @Loggable
+    async updateFlight(req: Request, res: Response) {
+      const flightId = req.params.id;
+      const flightData = req.body;
 
-  router
-    .route('/flights')
-    .get(getAllFlights)
-    .post(validate(FlightRequest), createFlight);
+      try {
+        return res.status(200).json({
+          flight: await flightService.updateFlight(flightId, flightData),
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(400).json({ error });
+      }
+    }
+  }
 
-  router
-    .route('/flights/:id')
-    .get(getFlightById)
-    .delete(deleteFlightById)
-    .put(validate(FlightRequest), updateFlight);
-
-  return {
-    router,
-    routes: {
-      getAllFlights,
-      getFlightById,
-      createFlight,
-      updateFlight,
-      deleteFlightById,
-    },
-  };
+  return new FlightRouterClass();
 };
