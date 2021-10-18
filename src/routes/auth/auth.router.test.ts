@@ -1,4 +1,5 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
+import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
 import { AuthService } from '../../services/auth/auth.service';
@@ -14,7 +15,7 @@ let authRouter: any;
 
 beforeAll(() => {
   mockAuthService = mock<AuthService>();
-  authRouter = AuthRouter(mockAuthService);
+  authRouter = AuthRouter(express.Router(), mockAuthService);
 });
 
 afterEach(() => {
@@ -32,7 +33,7 @@ describe('login endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await authRouter.routes.login(mockReq, mockRes);
+    await authRouter.login(mockReq, mockRes);
 
     expect(mockAuthService.login).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -47,7 +48,7 @@ describe('login endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await authRouter.routes.login(mockReq, mockRes);
+    await authRouter.login(mockReq, mockRes);
 
     expect(mockAuthService.login).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -61,7 +62,7 @@ describe('login endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await authRouter.routes.login(mockReq, mockRes);
+    await authRouter.login(mockReq, mockRes);
 
     expect(mockAuthService.login).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -82,7 +83,7 @@ describe('register endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await authRouter.routes.register(mockReq, mockRes);
+    await authRouter.register(mockReq, mockRes);
 
     expect(mockAuthService.register).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -97,7 +98,7 @@ describe('register endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await authRouter.routes.register(mockReq, mockRes);
+    await authRouter.register(mockReq, mockRes);
 
     expect(mockAuthService.register).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(409);

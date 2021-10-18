@@ -1,7 +1,7 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Repository } from 'typeorm';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
-import { invalidIdMsg } from '../../utils/validateId';
+import { invalidIdMsg } from '../../utils/validate_id';
 import { FlightTicketService } from './flight_ticket.service';
 
 let mockFlightTicketsRepository: MockProxy<Repository<FlightTicket>>;

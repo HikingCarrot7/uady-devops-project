@@ -3,6 +3,7 @@
 import { ValidationError, Validator } from 'class-validator';
 import * as express from 'express';
 import { deserialize } from 'json-typescript-mapper';
+import { logger, ValidationErrorsFormatter } from '../logger';
 
 // Because all type information is erased in the compiled
 // JavaScript, we can use this clever structural-typing
@@ -21,6 +22,15 @@ export function validate<T>(type: Constructor<T>): express.RequestHandler {
     let errors = validator.validateSync(input as any);
 
     if (errors.length > 0) {
+      logger.log({
+        level: 'warn',
+        message: 'Validation error',
+        httpMethod: req.method,
+        route: req.originalUrl,
+        validationErrors: parseErrors(errors),
+        formatter: ValidationErrorsFormatter,
+      });
+
       next(errors);
     } else {
       req.body = input;
@@ -41,9 +51,13 @@ export function validationError(
   if (Array.isArray(err) && err[0] instanceof ValidationError) {
     res
       .status(400)
-      .json({ errors: err.flatMap((e) => Object.values(e.constraints)) })
+      .json({ errors: parseErrors(err) })
       .end();
   } else {
     next(err);
   }
 }
+
+const parseErrors = (errors: ValidationError[]) => {
+  return errors.flatMap((e) => Object.values(e.constraints!));
+};

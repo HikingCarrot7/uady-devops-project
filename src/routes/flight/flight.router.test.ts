@@ -1,9 +1,10 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
+import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { DeleteResult } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
 import { FlightService } from '../../services/flight/flight.service';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 import { FlightRouter } from './flight.router';
 
 let mockFlightService: MockProxy<FlightService>;
@@ -11,7 +12,7 @@ let flightRouter: any;
 
 beforeAll(() => {
   mockFlightService = mock<FlightService>();
-  flightRouter = FlightRouter(mockFlightService);
+  flightRouter = FlightRouter(express.Router(), mockFlightService);
 });
 
 afterEach(() => {
@@ -25,7 +26,7 @@ describe('getAllFlights endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await flightRouter.routes.getAllFlights(mockReq, mockRes);
+    await flightRouter.getAllFlights(mockReq, mockRes);
 
     expect(mockFlightService.getAllFlights).toHaveBeenCalledTimes(1);
 
@@ -56,7 +57,7 @@ describe('getFlightById endpoint', () => {
 
     mockReq.params.id = flightId;
 
-    await flightRouter.routes.getFlightById(mockReq, mockRes);
+    await flightRouter.getFlightById(mockReq, mockRes);
 
     expect(mockFlightService.getFlightById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
@@ -87,7 +88,7 @@ describe('createFlight endpoint', () => {
 
     mockReq.body = reqBody;
 
-    await flightRouter.routes.createFlight(mockReq, mockRes);
+    await flightRouter.createFlight(mockReq, mockRes);
 
     expect(mockFlightService.createFlight).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
@@ -114,7 +115,7 @@ describe('updateFlight endpoint', () => {
     mockReq.params.id = flightId;
     mockReq.body = reqBody;
 
-    await flightRouter.routes.updateFlight(mockReq, mockRes);
+    await flightRouter.updateFlight(mockReq, mockRes);
 
     expect(mockFlightService.updateFlight).toHaveBeenCalledTimes(1);
     expect(mockFlightService.updateFlight).toHaveBeenCalledWith(
@@ -142,7 +143,7 @@ describe('deleteFlight endpoint', () => {
 
     mockReq.params.id = flightId;
 
-    await flightRouter.routes.deleteFlightById(mockReq, mockRes);
+    await flightRouter.deleteFlightById(mockReq, mockRes);
 
     expect(mockFlightService.deleteFlightById).toHaveBeenCalledTimes(1);
     expect(mockFlightService.deleteFlightById).toHaveBeenCalledWith(flightId);

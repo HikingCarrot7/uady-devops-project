@@ -1,6 +1,6 @@
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightClassRepository } from '../../repositories/flight_class.repository';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 
 export class FlightClassService {
   constructor(private flightClassRepository: FlightClassRepository) {}

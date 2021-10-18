@@ -1,8 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
+import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { User } from '../../entities/user.entity';
 import { UserService } from '../../services/user/user.service';
-import { invalidIdMsg, isNumericId } from '../../utils/validateId';
+import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
 import { UserRouter } from './user.router';
 
 let mockUserService: MockProxy<UserService>;
@@ -10,7 +11,7 @@ let userRouter: any;
 
 beforeAll(() => {
   mockUserService = mock<UserService>();
-  userRouter = UserRouter(mockUserService);
+  userRouter = UserRouter(express.Router(), mockUserService);
 });
 
 afterEach(() => {
@@ -24,7 +25,7 @@ describe('getAllUsers endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await userRouter.routes.getAllUsers(mockReq, mockRes);
+    await userRouter.getAllUsers(mockReq, mockRes);
 
     expect(mockUserService.getAllUsers).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -37,11 +38,11 @@ describe('getAllUsers endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    await userRouter.routes.getAllUsers(mockReq, mockRes);
+    await userRouter.getAllUsers(mockReq, mockRes);
 
     expect(mockUserService.getAllUsers).toHaveBeenCalledTimes(1);
-    expect(mockRes.sendStatus).toHaveBeenCalledWith(500);
-    expect(mockRes.json).not.toBeCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toBeCalled();
   });
 });
 
@@ -71,7 +72,7 @@ describe('getUserById endpoint', () => {
 
     mockReq.params.id = userId;
 
-    await userRouter.routes.getUserById(mockReq, mockRes);
+    await userRouter.getUserById(mockReq, mockRes);
 
     expect(mockUserService.getUserById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
@@ -103,11 +104,11 @@ describe('getUserById endpoint', () => {
 
     mockReq.params.id = userId;
 
-    await userRouter.routes.getUserById(mockReq, mockRes);
+    await userRouter.getUserById(mockReq, mockRes);
 
     expect(mockUserService.getUserById).toBeCalledTimes(1);
-    expect(mockRes.sendStatus).toBeCalledWith(500);
-    expect(mockRes.json).not.toBeCalled();
+    expect(mockRes.status).toBeCalledWith(500);
+    expect(mockRes.json).toBeCalled();
   });
 });
 
@@ -131,7 +132,7 @@ describe('createUser endpoint', () => {
 
     mockReq.body = reqBody;
 
-    await userRouter.routes.createUser(mockReq, mockRes);
+    await userRouter.createUser(mockReq, mockRes);
 
     expect(mockUserService.createUser).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
@@ -171,7 +172,7 @@ describe('updateUser endpoint', () => {
     mockReq.params.id = `${userId}`;
     mockReq.body = reqBody;
 
-    await userRouter.routes.updateUser(mockReq, mockRes);
+    await userRouter.updateUser(mockReq, mockRes);
 
     expect(mockUserService.updateUser).toHaveBeenCalledTimes(1);
     expect(mockUserService.updateUser).toHaveBeenCalledWith(userId, reqBody);

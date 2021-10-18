@@ -4,6 +4,7 @@ import { FlightClassService } from '../../services/flight_class/flight_class.ser
 import { validate } from '../../utils/validation';
 import { FlightClassRequest } from './flight_class.request';
 
+// Pienso que deberíamos eliminar a esto entidad como "principal", sirve únicamente como complemento.
 export const FlightClassRouter = (flightClassService: FlightClassService) => {
   const getAllFlightsClasses = async (req: Request, res: Response) => {
     return res.status(200).json({
