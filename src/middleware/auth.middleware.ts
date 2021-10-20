@@ -1,16 +1,12 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { RequestWithUserId } from '../routes/types';
 import { UserNotFoundException } from '../services/user/user.exceptions';
 import { UserService } from '../services/user/user.service';
 import { serializeError } from '../utils/serialize_error';
 
-// No sé donde poner esto, ni el nombre que podría tener. @Shadic78
-export interface MyContext extends Request {
-  userId?: number;
-}
-
 export const authenticateJWT = (userService: UserService) => {
-  return async (req: MyContext, res: Response, next: () => void) => {
+  return async (req: RequestWithUserId, res: Response, next: () => void) => {
     const authHeader = req.headers.authorization;
 
     if (authHeader) {

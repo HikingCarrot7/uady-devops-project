@@ -1,14 +1,17 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Repository } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
+import { SiteService } from '../site/site.service';
 import { FlightService } from './flight.service';
 
 let mockFlightRepository: MockProxy<Repository<Flight>>;
+let mockSiteService: MockProxy<SiteService>;
 let flightService: any;
 
 beforeAll(() => {
   mockFlightRepository = mock<Repository<Flight>>();
-  flightService = new FlightService(mockFlightRepository);
+  mockSiteService = mock<SiteService>();
+  flightService = new FlightService(mockFlightRepository, mockSiteService);
 });
 
 afterEach(() => {
