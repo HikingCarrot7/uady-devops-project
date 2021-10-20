@@ -14,8 +14,8 @@ export const createDefaultServices = () => {
   const userService = createDefaultUserService();
   const authService = createDefaultAuthService(userService);
   const siteService = createDefaultSiteService();
+  const flightService = createDefaultFlightService(siteService);
   const flightTicketService = createDefaultFlightTicketService();
-  const flightService = createDefaultFlightService();
 
   return {
     userService,
@@ -45,6 +45,6 @@ export const createDefaultFlightTicketService = () => {
   return new FlightTicketService(getCustomRepository(FlightTicketRepository));
 };
 
-export const createDefaultFlightService = () => {
-  return new FlightService(getCustomRepository(FlightRepository));
+export const createDefaultFlightService = (siteService: SiteService) => {
+  return new FlightService(getCustomRepository(FlightRepository), siteService);
 };

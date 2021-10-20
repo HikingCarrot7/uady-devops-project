@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsNumber, IsPositive, Length } from 'class-validator';
+import { IsNotEmpty, IsPositive, Length } from 'class-validator';
 
 export class SiteRequest {
   @IsNotEmpty({ message: 'Se debe especificar el id del país.' })
-  @IsNumber({}, { message: 'El id del país debe ser un número.' })
-  @IsPositive({ message: 'El id del país debe ser mayor a 0.' })
+  @IsPositive({ message: 'El id del país debe ser un número mayor a 0.' })
   countryId: number = 0;
 
   @IsNotEmpty({ message: 'Se debe especificar un estado.' })

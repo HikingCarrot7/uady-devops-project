@@ -1,38 +1,61 @@
 import { Flight } from '../../entities/flight.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
-import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
+import { SiteService } from '../site/site.service';
+import {
+  FlightNotFoundException,
+  InvalidFlightException,
+} from './flight.exceptions';
 
 export class FlightService {
-  constructor(private flightRepository: FlightRepository) {}
+  constructor(
+    private flightRepository: FlightRepository,
+    private siteService: SiteService
+  ) {}
 
-  getAllFlights = async () => {
+  async getAllFlights(): Promise<Flight[]> {
     return await this.flightRepository.find();
-  };
+  }
 
-  getFlightById = async (id: string) => {
-    if (!isNumericId(id)) {
-      return Promise.reject(invalidIdMsg(id));
+  async getFlightById(id: number): Promise<Flight> {
+    const flight = await this.flightRepository.findOne({ id });
+
+    if (!flight) {
+      throw new FlightNotFoundException(id);
     }
 
-    return await this.flightRepository.findOne({ id });
-  };
+    return flight;
+  }
 
-  createFlight = async (flight: Flight) => {
-    return await this.flightRepository.save(flight);
-  };
+  async createFlight(
+    takeOffSiteId: number,
+    landingSiteId: number,
+    providedFlight: Flight
+  ): Promise<Flight> {
+    const takeOffSite = await this.siteService.getSiteById(takeOffSiteId);
+    const landingSite = await this.siteService.getSiteById(landingSiteId);
 
-  updateFlight = async (id: string, newFlight: Flight) => {
-    const result = await this.getFlightById(id);
-    const updatedFlight = { ...result, ...newFlight };
+    providedFlight.takeOffSite = takeOffSite;
+    providedFlight.landingSite = landingSite;
+
+    try {
+      return await this.flightRepository.save(providedFlight);
+    } catch {
+      throw new InvalidFlightException();
+    }
+  }
+
+  async updateFlight(id: number, providedFlight: Flight) {
+    const flight = await this.getFlightById(id);
+    const updatedFlight = { ...flight, ...providedFlight };
 
     return await this.flightRepository.save(updatedFlight);
-  };
+  }
 
-  deleteFlightById = async (id: string) => {
-    if (!isNumericId(id)) {
-      return Promise.reject(invalidIdMsg(id));
-    }
+  async deleteFlightById(id: number) {
+    const flight = await this.getFlightById(id);
 
-    return await this.flightRepository.delete({ id });
-  };
+    await this.flightRepository.delete({ id });
+
+    return flight;
+  }
 }

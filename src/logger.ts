@@ -54,7 +54,7 @@ const logger = winston.createLogger({
   level: 'debug',
   transports: [
     new winston.transports.File({
-      filename: 'api.log',
+      filename: 'logs/api.log',
       maxsize: 100_000_000, // 100 MB
     }),
   ],

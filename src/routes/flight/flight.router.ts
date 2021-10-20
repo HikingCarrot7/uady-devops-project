@@ -1,9 +1,16 @@
 import { Request, Response, Router } from 'express';
 import { Flight } from '../../entities/flight.entity';
 import { Loggable } from '../../middleware/loggable.middleware';
+import {
+  FlightNotFoundException,
+  InvalidFlightException,
+} from '../../services/flight/flight.exceptions';
 import { FlightService } from '../../services/flight/flight.service';
+import { SiteNotFoundException } from '../../services/site/site.exceptions';
+import { serializeError } from '../../utils/serialize_error';
 import { validate } from '../../utils/validation';
 import { FlightRequest } from './flight.request';
+import { UpdateFlightRequest } from './update_flight.request';
 
 export const FlightRouter = (router: Router, flightService: FlightService) => {
   class FlightRouterClass {
@@ -17,62 +24,65 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
         .route('/flights/:id')
         .get(this.getFlightById)
         .delete(this.deleteFlightById)
-        .put(validate(FlightRequest), this.updateFlight);
+        .put(validate(UpdateFlightRequest), this.updateFlight);
     }
 
     @Loggable
     async getAllFlights(req: Request, res: Response) {
-      return res
-        .status(200)
-        .json({ flights: await flightService.getAllFlights() });
+      try {
+        const flights = await flightService.getAllFlights();
+
+        return res.status(200).json(flights);
+      } catch (error) {
+        return res.status(500).json(serializeError(error));
+      }
     }
 
     @Loggable
     async getFlightById(req: Request, res: Response) {
-      const flightId = req.params.id;
+      const flightId = parseInt(req.params.id);
 
       try {
-        return res
-          .status(200)
-          .json({ flight: await flightService.getFlightById(flightId) });
+        const flight = await flightService.getFlightById(flightId);
+
+        return res.status(200).json(flight);
       } catch (error) {
-        console.log(error);
-        return res.status(400).json({ error });
+        if (error instanceof FlightNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
     }
 
     @Loggable
     async createFlight(req: Request, res: Response) {
-      const flightRequest = req.body as FlightRequest;
+      const { takeOffSiteId, landingSiteId, ...flightRequest } = req.body;
 
       try {
         const newFlight = await flightService.createFlight(
-          new Flight({ ...flightRequest })
+          takeOffSiteId,
+          landingSiteId,
+          new Flight(flightRequest)
         );
 
-        return res.status(201).json({ flight: newFlight });
+        return res.status(201).json(newFlight);
       } catch (error) {
-        return res.status(400).json({ error });
-      }
-    }
+        if (error instanceof InvalidFlightException) {
+          return res.status(400).json(serializeError(error.message));
+        }
 
-    @Loggable
-    async deleteFlightById(req: Request, res: Response) {
-      const flightId = req.params.id;
+        if (error instanceof SiteNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
 
-      try {
-        return res
-          .status(200)
-          .json({ flight: await flightService.deleteFlightById(flightId) });
-      } catch (error) {
-        console.log(error);
-        return res.status(400).json({ error });
+        return res.status(500).json(serializeError(error));
       }
     }
 
     @Loggable
     async updateFlight(req: Request, res: Response) {
-      const flightId = req.params.id;
+      const flightId = parseInt(req.params.id);
       const flightData = req.body;
 
       try {
@@ -82,6 +92,23 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
       } catch (error) {
         console.log(error);
         return res.status(400).json({ error });
+      }
+    }
+
+    @Loggable
+    async deleteFlightById(req: Request, res: Response) {
+      const flightId = parseInt(req.params.id);
+
+      try {
+        const deletedFlight = await flightService.deleteFlightById(flightId);
+
+        return res.status(200).json(deletedFlight);
+      } catch (error) {
+        if (error instanceof FlightNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
     }
   }
