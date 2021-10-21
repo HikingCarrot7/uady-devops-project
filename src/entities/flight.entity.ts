@@ -16,10 +16,10 @@ export class Flight extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 15 })
   date: string;
 
-  @Column()
+  @Column({ length: 10 })
   hour: string;
 
   @Column()
@@ -28,10 +28,16 @@ export class Flight extends BaseEntity {
   @OneToMany((type) => FlightTicket, (flightTicket) => flightTicket.flight)
   tickets: FlightTicket[];
 
-  @ManyToOne((type) => Site, (site) => site.asTakeOffFlights, { eager: true })
+  @ManyToOne((type) => Site, (site) => site.asTakeOffFlights, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   takeOffSite: Site;
 
-  @ManyToOne((type) => Site, (site) => site.asLandingFlights, { eager: true })
+  @ManyToOne((type) => Site, (site) => site.asLandingFlights, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   landingSite: Site;
 
   constructor(flight: Partial<Flight>) {

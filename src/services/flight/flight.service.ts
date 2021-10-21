@@ -1,9 +1,11 @@
 import { Flight } from '../../entities/flight.entity';
+import { Site } from '../../entities/site.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
 import { SiteService } from '../site/site.service';
 import {
   FlightNotFoundException,
   InvalidFlightException,
+  SameTakeOffAndLandingSiteException,
 } from './flight.exceptions';
 
 export class FlightService {
@@ -44,11 +46,42 @@ export class FlightService {
     }
   }
 
-  async updateFlight(id: number, providedFlight: Flight) {
+  async updateFlight(
+    id: number,
+    takeOffSiteId: number | undefined,
+    landingSiteId: number | undefined,
+    providedFlight: Flight
+  ): Promise<Flight> {
+    let takeOffSite: Site | undefined;
+    let landingSite: Site | undefined;
+
     const flight = await this.getFlightById(id);
+
+    if (takeOffSiteId) {
+      takeOffSite = await this.siteService.getSiteById(takeOffSiteId);
+      flight.takeOffSite = takeOffSite;
+    }
+
+    if (landingSiteId) {
+      landingSite = await this.siteService.getSiteById(landingSiteId);
+      flight.landingSite = landingSite;
+    }
+
+    if (takeOffSite && takeOffSite.id === flight.landingSite.id) {
+      throw new SameTakeOffAndLandingSiteException();
+    }
+
+    if (landingSite && landingSite.id === flight.takeOffSite.id) {
+      throw new SameTakeOffAndLandingSiteException();
+    }
+
     const updatedFlight = { ...flight, ...providedFlight };
 
-    return await this.flightRepository.save(updatedFlight);
+    try {
+      return await this.flightRepository.save(updatedFlight);
+    } catch {
+      throw new InvalidFlightException();
+    }
   }
 
   async deleteFlightById(id: number) {

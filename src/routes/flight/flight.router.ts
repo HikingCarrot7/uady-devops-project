@@ -4,6 +4,7 @@ import { Loggable } from '../../middleware/loggable.middleware';
 import {
   FlightNotFoundException,
   InvalidFlightException,
+  SameTakeOffAndLandingSiteException,
 } from '../../services/flight/flight.exceptions';
 import { FlightService } from '../../services/flight/flight.service';
 import { SiteNotFoundException } from '../../services/site/site.exceptions';
@@ -83,15 +84,30 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
     @Loggable
     async updateFlight(req: Request, res: Response) {
       const flightId = parseInt(req.params.id);
-      const flightData = req.body;
+      const { takeOffSiteId, landingSiteId, ...providedFlight } = req.body;
 
       try {
-        return res.status(200).json({
-          flight: await flightService.updateFlight(flightId, flightData),
-        });
+        const updatedFlight = await flightService.updateFlight(
+          flightId,
+          takeOffSiteId,
+          landingSiteId,
+          providedFlight
+        );
+
+        return res.status(200).json(updatedFlight);
       } catch (error) {
-        console.log(error);
-        return res.status(400).json({ error });
+        if (
+          error instanceof FlightNotFoundException ||
+          error instanceof SiteNotFoundException
+        ) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        if (error instanceof SameTakeOffAndLandingSiteException) {
+          return res.status(400).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
       }
     }
 

@@ -29,7 +29,7 @@ export function RequestMethodParamsDebugFormatter(
 ) {
   return `${BaseRequestLog(this)} | method_name: ${
     this.methodName
-  } params: ${JSON.stringify(this.reqParams)}`;
+  } | params: ${JSON.stringify(this.reqParams)}`;
 }
 
 export function QueryDBDebugFormatter(this: winston.Logform.TransformableInfo) {

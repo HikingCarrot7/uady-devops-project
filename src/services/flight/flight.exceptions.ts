@@ -14,3 +14,9 @@ export class InvalidFlightException extends Error {
     super(msg);
   }
 }
+
+export class SameTakeOffAndLandingSiteException extends Error {
+  constructor(msg = 'El sitio de origen y destino son el mismo!') {
+    super(msg);
+  }
+}
