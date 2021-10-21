@@ -100,12 +100,14 @@ describe('updateFlight endpoint', () => {
 
     const reqBody = {
       hour: '10:00',
+      takeOffSiteId: 1,
+      landingSiteId: 2,
     };
 
+    const { takeOffSiteId, landingSiteId, ...providedFlight } = reqBody;
+
     mockFlightService.updateFlight.mockImplementation(() => {
-      return Promise.resolve({
-        ...reqBody,
-      } as Flight);
+      return Promise.resolve(providedFlight as Flight);
     });
 
     const mockReq = getMockReq();
@@ -119,7 +121,9 @@ describe('updateFlight endpoint', () => {
     expect(mockFlightService.updateFlight).toHaveBeenCalledTimes(1);
     expect(mockFlightService.updateFlight).toHaveBeenCalledWith(
       flightId,
-      reqBody
+      1,
+      2,
+      providedFlight
     );
     expect(mockRes.status).toBeCalledWith(200);
   });

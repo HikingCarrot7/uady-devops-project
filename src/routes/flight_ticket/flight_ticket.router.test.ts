@@ -178,7 +178,7 @@ describe('deleteFlightTicket endpoint', () => {
     const { res: mockRes } = getMockRes();
 
     mockReq.params.id = ticketId;
-  
+
     await flightTicketRouter.deleteFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.deleteFlightTicket).toHaveBeenCalledTimes(1);
