@@ -1,7 +1,6 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
-import { DeleteResult } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
 import { FlightService } from '../../services/flight/flight.service';
 import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
@@ -36,10 +35,10 @@ describe('getAllFlights endpoint', () => {
 
 describe('getFlightById endpoint', () => {
   test('should return 200 http status code if flight exists', async () => {
-    const flightId = '1';
+    const flightId = 1;
 
     const flight = {
-      id: parseInt(flightId),
+      id: flightId,
     };
 
     mockFlightService.getFlightById.mockImplementation(async (flightId) => {
@@ -55,13 +54,13 @@ describe('getFlightById endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = flightId;
+    mockReq.params.id = `${flightId}`;
 
     await flightRouter.getFlightById(mockReq, mockRes);
 
     expect(mockFlightService.getFlightById).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({ flight: flight });
+    expect(mockRes.json).toHaveBeenCalledWith(flight);
   });
 });
 
@@ -97,7 +96,7 @@ describe('createFlight endpoint', () => {
 
 describe('updateFlight endpoint', () => {
   test('should return 200 http status code when flight updated', async () => {
-    const flightId = '1';
+    const flightId = 1;
 
     const reqBody = {
       hour: '10:00',
@@ -112,7 +111,7 @@ describe('updateFlight endpoint', () => {
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = flightId;
+    mockReq.params.id = `${flightId}`;
     mockReq.body = reqBody;
 
     await flightRouter.updateFlight(mockReq, mockRes);
@@ -128,20 +127,20 @@ describe('updateFlight endpoint', () => {
 
 describe('deleteFlight endpoint', () => {
   test('should return 200 http status when flight deleted', async () => {
-    const flightId = '1';
+    const flightId = 1;
+
     const flightDeleted = {
-      raw: '',
-      afected: 1,
+      id: 1,
     };
 
     mockFlightService.deleteFlightById.mockImplementation((flightId) => {
-      return Promise.resolve(flightDeleted as DeleteResult);
+      return Promise.resolve(flightDeleted as Flight);
     });
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = flightId;
+    mockReq.params.id = `${flightId}`;
 
     await flightRouter.deleteFlightById(mockReq, mockRes);
 
