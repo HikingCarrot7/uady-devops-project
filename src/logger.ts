@@ -28,7 +28,7 @@ export function RequestMethodParamsDebugFormatter(
   this: winston.Logform.TransformableInfo
 ) {
   return `${BaseRequestLog(this)} | method_name: ${
-    this.method_name
+    this.methodName
   } params: ${JSON.stringify(this.reqParams)}`;
 }
 
