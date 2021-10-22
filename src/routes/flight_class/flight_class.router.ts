@@ -1,94 +1,46 @@
-import express, { Request, Response } from 'express';
-import { FlightClass } from '../../entities/flight_class.entity';
+import { Request, Response, Router } from 'express';
+import { FlightClassNotFoundException } from '../../services/flight_class/flight_class.exeptions';
 import { FlightClassService } from '../../services/flight_class/flight_class.service';
-import { validate } from '../../utils/validation';
-import { FlightClassRequest } from './flight_class.request';
+import { serializeError } from '../../utils/serialize_error';
 
-// Pienso que deberíamos eliminar a esto entidad como "principal", sirve únicamente como complemento.
-export const FlightClassRouter = (flightClassService: FlightClassService) => {
-  const getAllFlightsClasses = async (req: Request, res: Response) => {
-    return res.status(200).json({
-      flightsClasses: await flightClassService.getAllFlightsClasses(),
-    });
-  };
-
-  const getFlightClassById = async (req: Request, res: Response) => {
-    const flightClassId = req.params.id;
-
-    try {
-      return res.status(200).json({
-        flightClass: await flightClassService.getFlightClassById(flightClassId),
-      });
-    } catch (error) {
-      return res.status(400).json({ error });
+export const FlightClassRouter = (
+  router: Router,
+  flightClassService: FlightClassService
+) => {
+  class FlightClass {
+    constructor() {
+      router.route('/flights-classes').get(this.getAllFlightsClasses);
+      router.route('/flights-classes/:id').get(this.getFlightClassById);
     }
-  };
 
-  const createFlightClass = async (req: Request, res: Response) => {
-    const flightClassRequest = req.body as FlightClassRequest;
+    async getAllFlightsClasses(req: Request, res: Response) {
+      try {
+        const flightClasses = await flightClassService.getAllFlightsClasses();
 
-    try {
-      const newFlightClass = await flightClassService.createFlightClass(
-        new FlightClass({ ...flightClassRequest })
-      );
-
-      return res.status(201).json({ flightClass: newFlightClass });
-    } catch (error) {
-      return res.status(400).json({ error });
+        return res.status(200).json(flightClasses);
+      } catch (error) {
+        return res.status(500).json(serializeError(error));
+      }
     }
-  };
 
-  const deleteFlightClassById = async (req: Request, res: Response) => {
-    const flightClassId = req.params.id;
+    async getFlightClassById(req: Request, res: Response) {
+      const flightClassId = parseInt(req.params.id);
 
-    try {
-      return res.status(200).json({
-        flightClass: await flightClassService.deleteFlightClassById(
+      try {
+        const flightClass = await flightClassService.getFlightClassById(
           flightClassId
-        ),
-      });
-    } catch (error) {
-      return res.status(400).json({ error });
+        );
+
+        return res.status(200).json(flightClass);
+      } catch (error) {
+        if (error instanceof FlightClassNotFoundException) {
+          return res.status(404).json(serializeError(error.message));
+        }
+
+        return res.status(500).json(serializeError(error));
+      }
     }
-  };
+  }
 
-  const updateFlightClass = async (req: Request, res: Response) => {
-    const flightClassId = req.params.id;
-    const flightClassData = req.body;
-
-    try {
-      return res.status(200).json({
-        flightClass: await flightClassService.updateFlightClass(
-          flightClassId,
-          flightClassData
-        ),
-      });
-    } catch (error) {
-      return res.status(400).json({ error });
-    }
-  };
-
-  const router = express.Router();
-
-  router
-    .route('/flights-classes')
-    .get(getAllFlightsClasses)
-    .post(validate(FlightClassRequest), createFlightClass);
-
-  router
-    .route('/flights-classes/:id')
-    .get(getFlightClassById)
-    .delete(deleteFlightClassById)
-    .put(validate(FlightClassRequest), updateFlightClass);
-
-  return {
-    router,
-    routes: {
-      getAllFlightsClasses,
-      getFlightClassById,
-      createFlightClass,
-      updateFlightClass,
-      deleteFlightClassById,
-    },
-  };
+  return new FlightClass();
 };

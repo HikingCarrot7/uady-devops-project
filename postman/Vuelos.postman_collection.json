@@ -16,7 +16,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ1Mjg4NzIsImV4cCI6MTYzNDU0Njg3Mn0.NhfShlXCxlN-afHTvFYw8UYstkl1OEo3dSaPyTy3kqQ",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
 									"type": "string"
 								}
 							]
@@ -116,7 +116,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQzNDI4NjAsImV4cCI6MTYzNDM2MDg2MH0.I5x2BFXywMnSYRE0WQ0EC43-h1MMKwWvaZxkWJb4LbA",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NzM5OTYsImV4cCI6MTYzNDc5MTk5Nn0.bk1By4h3FS-0I0r9p4szPnLPPptHzwDiDTfQBt22sEU",
 									"type": "string"
 								}
 							]
@@ -226,7 +226,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQzNTU5MjAsImV4cCI6MTYzNDM3MzkyMH0.6K_D3c4aPnqwY1r2KgWVfUoz5EQ5wAODA33i9ahBHdM",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NzM0MTEsImV4cCI6MTYzNDc5MTQxMX0.w1JL_flfc9EG_JGv_vjVAAC_9F1i9haAS50XosXEDmQ",
 									"type": "string"
 								}
 							]
@@ -254,8 +254,82 @@
 			"name": "Flight tickets",
 			"item": [
 				{
+					"name": "Get my flight tickets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/me/flight-tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me",
+								"flight-tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight tickets from user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/2/flight-tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"flight-tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get flight ticket by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -275,45 +349,23 @@
 					"response": []
 				},
 				{
-					"name": "Get flight tickets from user",
+					"name": "Create flight ticket",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0N0BnbWFpbC5jb20iLCJpYXQiOjE2MzM5OTM5OTMsImV4cCI6MTYzNDAxMTk5M30.k6lujUkenapISSChJ6o5uvmn71-VBCiOEUC42uCsMoc",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
 									"type": "string"
 								}
 							]
 						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:5000/api/v1/users/1/flight-tickets",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"users",
-								"1",
-								"flight-tickets"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create flight ticket",
-					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": 1,\n    \"flightId\": 1,\n    \"flightClassId\": 1,\n    \"passengers\": 10\n}",
+							"raw": "{\n    \"flightId\": 8,\n    \"flightClassId\": 1,\n    \"passengers\": 10\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -336,12 +388,31 @@
 					"response": []
 				},
 				{
-					"name": "Delete ticket",
+					"name": "Update flight ticket",
 					"request": {
-						"method": "DELETE",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flightClassId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "localhost:5000/api/v1/flight-ticket/2",
+							"raw": "localhost:5000/api/v1/flight-ticket/1",
 							"host": [
 								"localhost"
 							],
@@ -350,7 +421,38 @@
 								"api",
 								"v1",
 								"flight-ticket",
-								"2"
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flight-ticket/3",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flight-ticket",
+								"3"
 							]
 						}
 					},
@@ -432,7 +534,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
 									"type": "string"
 								}
 							]
@@ -493,7 +595,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
 									"type": "string"
 								}
 							]
@@ -550,6 +652,46 @@
 								"v1",
 								"flights",
 								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update flight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"landingSiteId\": 1,\n    \"takeOffSiteId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/flights/8",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights",
+								"8"
 							]
 						}
 					},
@@ -725,6 +867,72 @@
 								"api",
 								"v1",
 								"sites",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flight classes",
+			"item": [
+				{
+					"name": "Get all flight classes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights-classes",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights-classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight class by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights-classes/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights-classes",
 								"1"
 							]
 						}

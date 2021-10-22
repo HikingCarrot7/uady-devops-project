@@ -18,6 +18,7 @@ export class FlightTicket extends BaseEntity {
   user: User;
 
   @ManyToOne((type) => Flight, (flight) => flight.tickets, {
+    eager: true,
     onDelete: 'CASCADE',
   })
   flight: Flight;

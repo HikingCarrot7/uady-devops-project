@@ -84,7 +84,7 @@ describe('updateFlight method', () => {
   test('update flight should work', async () => {
     const providedFlight = {
       date: '2021-12-12',
-      hour: '24:00',
+      hour: '25:00',
       estimatedHours: 5,
       tickets: [{ id: 1 }],
       takeOffSite: { id: 1 },
@@ -100,14 +100,12 @@ describe('updateFlight method', () => {
       landingSite: { id: 1 },
     } as Flight;
 
-    mockFlightRepository.findOne.mockReturnValueOnce(
-      Promise.resolve(savedFlight)
-    );
+    mockFlightRepository.findOne.mockReturnValue(Promise.resolve(savedFlight));
     mockFlightRepository.save.mockReturnValueOnce(Promise.resolve(savedFlight));
 
     await flightService.updateFlight(1, providedFlight);
 
-    expect(mockFlightRepository.findOne).toHaveBeenCalledTimes(1);
+    expect(mockFlightRepository.findOne).toHaveBeenCalledTimes(2);
     expect(mockFlightRepository.save).toHaveBeenCalledTimes(1);
     expect(mockFlightRepository.save).toHaveBeenCalledWith(savedFlight);
   });

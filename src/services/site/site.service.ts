@@ -51,7 +51,7 @@ export class SiteService {
 
     const site = await this.getSiteById(siteId);
 
-    const updatedSite = { ...site, ...providedSite };
+    const updatedSite = new Site({ ...site, ...providedSite });
 
     await this.siteRepository.save(updatedSite);
 

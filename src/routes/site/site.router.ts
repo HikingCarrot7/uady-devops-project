@@ -90,7 +90,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       } catch (error) {
         if (
           error instanceof CountryNotFoundException ||
-          error instanceof SiteNotFoundException
+          SiteNotFoundException
         ) {
           return res.status(404).json(serializeError(error.message));
         }

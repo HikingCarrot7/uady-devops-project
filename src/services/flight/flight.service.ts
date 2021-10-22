@@ -67,18 +67,21 @@ export class FlightService {
       flight.landingSite = landingSite;
     }
 
-    if (takeOffSite && takeOffSite.id === flight.landingSite.id) {
+    /* Esta validación se debe porque no siempre se puede 
+    proveer el id del vuelo de origen Y el de destino en el request. */
+    if (
+      (takeOffSite && takeOffSite.id === flight.landingSite.id) ||
+      (landingSite && landingSite.id === flight.takeOffSite.id)
+    ) {
       throw new SameTakeOffAndLandingSiteException();
     }
 
-    if (landingSite && landingSite.id === flight.takeOffSite.id) {
-      throw new SameTakeOffAndLandingSiteException();
-    }
-
-    const updatedFlight = { ...flight, ...providedFlight };
+    const updatedFlight = new Flight({ ...flight, ...providedFlight });
 
     try {
-      return await this.flightRepository.save(updatedFlight);
+      await this.flightRepository.save(updatedFlight);
+
+      return await this.getFlightById(id);
     } catch {
       throw new InvalidFlightException();
     }

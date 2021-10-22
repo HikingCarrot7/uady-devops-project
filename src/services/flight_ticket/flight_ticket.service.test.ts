@@ -1,15 +1,33 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { Repository } from 'typeorm';
+import { Flight } from '../../entities/flight.entity';
+import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
+import { User } from '../../entities/user.entity';
 import { invalidIdMsg } from '../../utils/validate_id';
+import { FlightService } from '../flight/flight.service';
+import { FlightClassService } from '../flight_class/flight_class.service';
+import { UserService } from '../user/user.service';
 import { FlightTicketService } from './flight_ticket.service';
 
 let mockFlightTicketsRepository: MockProxy<Repository<FlightTicket>>;
+let mockUserService: MockProxy<UserService>;
+let mockFlightService: MockProxy<FlightService>;
+let mockFlightClassService: MockProxy<FlightClassService>;
 let flightTicketService: any;
 
 beforeAll(() => {
   mockFlightTicketsRepository = mock<Repository<FlightTicket>>();
-  flightTicketService = new FlightTicketService(mockFlightTicketsRepository);
+  mockUserService = mock<UserService>();
+  mockFlightService = mock<FlightService>();
+  mockFlightClassService = mock<FlightClassService>();
+
+  flightTicketService = new FlightTicketService(
+    mockFlightTicketsRepository,
+    mockUserService,
+    mockFlightService,
+    mockFlightClassService
+  );
 });
 
 afterEach(() => {
@@ -76,28 +94,50 @@ describe('getFlightTicketById method', () => {
 describe('createFlightTicket method', () => {
   test('create a new ticket should work', async () => {
     const providedTicket = {
-      user: { id: 1 },
-      flight: { id: 1 },
-      flightClass: { id: 1 },
+      userId: 1,
+      flightId: 1,
+      flightClassId: 1,
       passengers: 5,
-    } as FlightTicket;
+    };
 
-    const newTicket = { ...providedTicket, id: 1 } as FlightTicket;
+    const { userId, flightId, flightClassId, ...restProvidedTicket } =
+      providedTicket;
+
+    const newTicket = new FlightTicket({
+      user: { id: 1 } as User,
+      flight: { id: 1 } as Flight,
+      flightClass: { id: 1 } as FlightClass,
+      ...restProvidedTicket,
+    });
+
+    mockUserService.getUserById.mockImplementation((id) =>
+      Promise.resolve(newTicket.user)
+    );
+
+    mockFlightService.getFlightById.mockImplementation((id) =>
+      Promise.resolve(newTicket.flight)
+    );
+
+    mockFlightClassService.getFlightClassById.mockImplementation((id) =>
+      Promise.resolve(newTicket.flightClass)
+    );
 
     mockFlightTicketsRepository.save.mockReturnValueOnce(
       Promise.resolve(newTicket)
     );
 
-    await flightTicketService.createFlightTicket(
-      providedTicket.user.id,
-      providedTicket.flight.id,
-      providedTicket.flightClass.id,
-      providedTicket.passengers
+    mockFlightTicketsRepository.findOne.mockImplementation((id) =>
+      Promise.resolve(newTicket)
     );
 
-    expect(mockFlightTicketsRepository.save).toHaveBeenCalledWith(
-      providedTicket
+    await flightTicketService.createFlightTicket(
+      userId,
+      flightId,
+      flightClassId,
+      restProvidedTicket
     );
+
+    expect(mockFlightTicketsRepository.save).toHaveBeenCalledWith(newTicket);
     expect(mockFlightTicketsRepository.save).toHaveBeenCalledTimes(1);
     expect(mockFlightTicketsRepository.save).toHaveReturned();
   });
@@ -126,18 +166,26 @@ describe('UpdateFlightTicket method', () => {
       passengers: 6,
     } as FlightTicket;
 
-    mockFlightTicketsRepository.save.mockReturnValueOnce(
+    mockFlightTicketsRepository.save.mockReturnValue(
       Promise.resolve(savedTicket)
     );
 
-    mockFlightTicketsRepository.findOne.mockReturnValueOnce(
+    mockFlightTicketsRepository.findOne.mockReturnValue(
       Promise.resolve(fetchedTicket)
     );
 
-    await flightTicketService.updateFlightTicket(1, providedTicket);
+    mockFlightClassService.getFlightClassById.mockImplementation((id) =>
+      Promise.resolve({ id: 1 } as FlightClass)
+    );
 
-    expect(mockFlightTicketsRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockFlightTicketsRepository.findOne).toHaveBeenCalledWith(1);
+    await flightTicketService.updateFlightTicket(
+      1,
+      providedTicket.flightClass.id,
+      providedTicket
+    );
+
+    expect(mockFlightTicketsRepository.findOne).toHaveBeenCalledTimes(2);
+    expect(mockFlightTicketsRepository.findOne).toHaveBeenCalledWith({ id: 1 });
     expect(mockFlightTicketsRepository.save).toHaveBeenCalledWith(savedTicket);
   });
 });
@@ -158,7 +206,10 @@ describe('deleteFlightTicket method', () => {
 
     await flightTicketService.deleteFlightTicket(ticket.id);
 
-    expect(mockFlightTicketsRepository.findOne).toBeCalledWith(1);
+    expect(mockFlightTicketsRepository.findOne).toBeCalledWith({
+      id: ticket.id,
+    });
+
     expect(mockFlightTicketsRepository.delete).toHaveBeenCalledTimes(1);
   });
 });

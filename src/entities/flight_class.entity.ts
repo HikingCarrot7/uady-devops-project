@@ -4,6 +4,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { FlightTicket } from './flight_ticket.entity';
 
@@ -15,6 +16,7 @@ export enum CabinClass {
 }
 
 @Entity({ name: 'flight_classes' })
+@Unique(['cabinClass'])
 export class FlightClass extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

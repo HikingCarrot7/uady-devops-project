@@ -1,81 +1,93 @@
+import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketRepository } from '../../repositories/flight_ticket.repository';
-import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
+import { FlightTicketNotFoundException } from '../../routes/flight_ticket/flight_ticket.exceptions';
+import { FlightService } from '../flight/flight.service';
+import { FlightClassService } from '../flight_class/flight_class.service';
+import { UserService } from '../user/user.service';
 
 export class FlightTicketService {
-  constructor(private flightTicketRepo: FlightTicketRepository) {}
+  constructor(
+    private flightTicketRepo: FlightTicketRepository,
+    private userService: UserService,
+    private flightService: FlightService,
+    private flightClassService: FlightClassService
+  ) {}
 
-  getUserFlightTickets = async (userId: number | string) => {
-    if (!isNumericId(userId)) {
-      return Promise.reject(invalidIdMsg(userId));
-    }
+  async getUserFlightTickets(userId: number): Promise<FlightTicket[]> {
+    await this.userService.getUserById(userId);
 
     return await this.flightTicketRepo.find({
       where: { user: { id: userId } },
     });
-  };
+  }
 
-  getFlightTicketById = async (tickedId: number | string) => {
-    if (!isNumericId(tickedId)) {
-      return Promise.reject(invalidIdMsg(tickedId));
+  async getFlightTicketById(tickedId: number): Promise<FlightTicket> {
+    const flightTicket = await this.flightTicketRepo.findOne({ id: tickedId });
+
+    if (!flightTicket) {
+      throw new FlightTicketNotFoundException(tickedId);
     }
 
-    return await this.flightTicketRepo.findOne({ id: tickedId });
-  };
+    return flightTicket;
+  }
 
-  createFlightTicket = async (
+  async createFlightTicket(
     userId: number,
     flightId: number,
     flightClassId: number,
-    passengers: number
-  ) => {
-    try {
-      const newTicket = await this.flightTicketRepo.save({
-        user: { id: userId },
-        flight: { id: flightId },
-        flightClass: { id: flightClassId },
-        passengers,
-      });
+    providedFlightTicket: FlightTicket
+  ): Promise<FlightTicket> {
+    const user = await this.userService.getUserById(userId);
+    const flight = await this.flightService.getFlightById(flightId);
+    const flightClass = await this.flightClassService.getFlightClassById(
+      flightClassId
+    );
 
-      return await this.flightTicketRepo.findOne(newTicket.id);
-    } catch (error) {
-      return null;
-    }
-  };
+    const newTicket = await this.flightTicketRepo.save({
+      ...providedFlightTicket,
+      user,
+      flight,
+      flightClass,
+    });
 
-  updateFlightTicket = async (
-    ticketId: number | string,
-    newFlightTicket: FlightTicket
-  ) => {
-    if (!isNumericId(ticketId)) {
-      return Promise.reject(invalidIdMsg(ticketId));
-    }
+    return await this.getFlightTicketById(newTicket.id);
+  }
 
-    const flightTicket = await this.flightTicketRepo.findOne(ticketId);
+  async updateFlightTicket(
+    ticketId: number,
+    flightClassId: number | undefined,
+    providedFlightTicket: FlightTicket
+  ): Promise<FlightTicket> {
+    let flightClass: FlightClass | undefined;
 
-    if (!flightTicket) {
-      return null;
-    }
-
-    // Por el momento...
-    flightTicket.passengers = newFlightTicket.passengers;
-
-    return await this.flightTicketRepo.save(flightTicket);
-  };
-
-  deleteFlightTicket = async (ticketId: number | string) => {
-    if (!isNumericId(ticketId)) {
-      return Promise.reject(invalidIdMsg(ticketId));
+    if (flightClassId) {
+      flightClass = await this.flightClassService.getFlightClassById(
+        flightClassId
+      );
     }
 
-    const flightTicket = await this.flightTicketRepo.findOne(ticketId);
+    const flightTicket = await this.getFlightTicketById(ticketId);
 
-    if (!flightTicket) {
-      return null;
+    if (flightClass) {
+      flightTicket.flightClass = flightClass;
     }
+
+    const updatedFlightTicket = new FlightTicket({
+      ...flightTicket,
+      ...providedFlightTicket,
+    });
+
+    await this.flightTicketRepo.save(updatedFlightTicket);
+
+    return await this.getFlightTicketById(ticketId);
+  }
+
+  async deleteFlightTicket(ticketId: number): Promise<FlightTicket> {
+    const flightTicket = await this.getFlightTicketById(ticketId);
 
     await this.flightTicketRepo.delete(ticketId);
 
     return flightTicket;
-  };
+  }
 }
