@@ -5,51 +5,57 @@ import {
   RequestMethodDebugFormatter,
   RequestMethodInfoFormatter,
   RequestMethodParamsDebugFormatter,
+  WarningFormatter,
 } from '../logger';
-import { isEmpty } from '../utils/is_object_empty';
+import { FnCallsCounter } from '../utils/function_calls_counter';
+import { isObjectEmpty } from '../utils/is_object_empty';
+
+const jsonMethodCounter = new FnCallsCounter();
 
 export const Loggable = (
   target: Object,
   propertyKey: string,
   descriptor: PropertyDescriptor
 ) => {
-  // No loggear nada si estamos testiando...
+  // No loggear nada si estamos testeando...
   if ((global as any).__TESTING__) {
     return descriptor;
   }
 
   const originalMethod = descriptor.value;
 
-  descriptor.value = function (req: Request, res: Response) {
-    const genericInfo = {
+  descriptor.value = function (req: Request, res: Response, next: () => void) {
+    const baseLogInfo = {
       httpMethod: req.method,
       route: req.originalUrl,
     };
+
+    const { authorization, ...headers } = req.headers;
 
     // INFO - Request con query params y headers.
     logger.log({
       level: 'info',
       message: `Request to method: ${propertyKey}`,
       queryParams: req.query,
-      headers: req.headers,
+      headers: headers,
       formatter: RequestMethodInfoFormatter,
-      ...genericInfo,
+      ...baseLogInfo,
     });
 
     // DEBUG - Request con parámetros y nombre de método.
-    if (!isEmpty(req.params)) {
+    if (!isObjectEmpty(req.params)) {
       logger.log({
         level: 'debug',
         message: `Request to method: ${propertyKey}`,
         reqParams: req.params,
         methodName: propertyKey,
         formatter: RequestMethodParamsDebugFormatter,
-        ...genericInfo,
+        ...baseLogInfo,
       });
     }
 
     // DEBUG - Request con body.
-    if (!isEmpty(req.body)) {
+    if (!isObjectEmpty(req.body)) {
       const { password, ...restBody } = req.body;
 
       logger.log({
@@ -57,33 +63,60 @@ export const Loggable = (
         message: `Request to method: ${propertyKey}`,
         reqBody: restBody,
         formatter: RequestMethodDebugFormatter,
-        ...genericInfo,
+        ...baseLogInfo,
       });
     }
 
     const originalJsonMethod = res.json;
 
-    res.json = (message) => {
-      if (res.statusCode >= 400) {
-        // ERROR - Errores
+    const loggableJsonMethod = (count: number, message: string) => {
+      const toOriginalMethod = () => {
+        res.json = originalJsonMethod;
+        return res.json(message);
+      };
+
+      /* Workaround cutre para evitar que se loggee 2 veces 
+      los warnings y errores que ocurren en un end point. 
+      Este problema es debido a que el método para validar el JWT 
+      también "implementa" o "sobreescribe" este método (res.json) 
+      por lo que cuando se llama a un endpoint privado, se llama a este método 
+      (porque tienen el decorator @Loggable) y posteriormente se vuelve a 
+      llamar este método por el autheticateJWT (porque también tiene el 
+      decorador @Loggable)*/
+      if (count > 1) {
+        return toOriginalMethod();
+      }
+
+      if (res.statusCode >= 400 && res.statusCode < 500) {
+        // Warnings - ocurrieron errores "esperados".
         logger.log({
-          level: 'error',
-          message: `Error in method ${propertyKey}`,
+          level: 'warn',
+          message: `Warning in method: ${propertyKey}`,
           statusCode: res.statusCode,
-          error: JSON.stringify(message),
-          formatter: ErrorFormatter,
-          ...genericInfo,
+          error: message,
+          formatter: WarningFormatter,
+          ...baseLogInfo,
         });
       }
 
-      res.json = originalJsonMethod;
+      if (res.statusCode >= 500) {
+        // ERROR - Errores "inesperados".
+        logger.log({
+          level: 'error',
+          message: `Something unexpected happened in ${propertyKey}`,
+          statusCode: res.statusCode,
+          error: message,
+          formatter: ErrorFormatter,
+          ...baseLogInfo,
+        });
+      }
 
-      return res.json(message);
+      return toOriginalMethod();
     };
 
-    const result = originalMethod.call(this, req, res);
+    res.json = jsonMethodCounter.provideCounterFor(loggableJsonMethod);
 
-    return result;
+    return originalMethod.call(this, req, res, next);
   };
 
   return descriptor;

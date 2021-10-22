@@ -1,3 +1,4 @@
+import { QueryFailedError } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
 import { Site } from '../../entities/site.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
@@ -41,8 +42,12 @@ export class FlightService {
 
     try {
       return await this.flightRepository.save(providedFlight);
-    } catch {
-      throw new InvalidFlightException();
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new InvalidFlightException();
+      }
+
+      throw error;
     }
   }
 
@@ -80,11 +85,15 @@ export class FlightService {
 
     try {
       await this.flightRepository.save(updatedFlight);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new InvalidFlightException();
+      }
 
-      return await this.getFlightById(id);
-    } catch {
-      throw new InvalidFlightException();
+      throw error;
     }
+
+    return await this.getFlightById(id);
   }
 
   async deleteFlightById(id: number) {
