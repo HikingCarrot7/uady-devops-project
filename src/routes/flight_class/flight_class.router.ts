@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import { Loggable } from '../../middleware/loggable.middleware';
 import { FlightClassNotFoundException } from '../../services/flight_class/flight_class.exeptions';
 import { FlightClassService } from '../../services/flight_class/flight_class.service';
 import { serializeError } from '../../utils/serialize_error';
@@ -13,6 +14,7 @@ export const FlightClassRouter = (
       router.route('/flights-classes/:id').get(this.getFlightClassById);
     }
 
+    @Loggable
     async getAllFlightsClasses(req: Request, res: Response) {
       try {
         const flightClasses = await flightClassService.getAllFlightsClasses();
@@ -23,6 +25,7 @@ export const FlightClassRouter = (
       }
     }
 
+    @Loggable
     async getFlightClassById(req: Request, res: Response) {
       const flightClassId = parseInt(req.params.id);
 
