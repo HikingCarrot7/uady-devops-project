@@ -27,7 +27,7 @@ export class UserService {
     return await this.userRepository.findOne({ email });
   }
 
-  async isEmailTaken(email: string) {
+  async isEmailTaken(email: string): Promise<boolean> {
     const user = await this.getUserByEmail(email);
 
     return !!user;

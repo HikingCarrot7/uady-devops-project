@@ -3,7 +3,7 @@ import { Router } from 'express';
 import 'reflect-metadata';
 import { createConnection, getConnectionOptions } from 'typeorm';
 import { app } from './app';
-import { authenticateJWT } from './middleware/auth.middleware';
+import { JWTAuthenticator } from './middleware/auth.middleware';
 import { TypeORMLogger } from './middleware/typeorm.logger.middleware';
 import { validateParamId } from './middleware/validate_id_format.middleware';
 import { AuthRouter } from './routes/auth/auth.router';
@@ -38,7 +38,7 @@ getConnectionOptions().then((connectionOptions) => {
     AuthRouter(publicRouter, authService);
 
     app.use('/api/v1/', publicRouter);
-    app.use(authenticateJWT(userService));
+    app.use(JWTAuthenticator(userService).authenticateJWT);
 
     UserRouter(privateRouter, userService);
     SiteRouter(privateRouter, siteService);
