@@ -3,7 +3,7 @@
 import { ValidationError, Validator } from 'class-validator';
 import * as express from 'express';
 import { deserialize } from 'json-typescript-mapper';
-import { logger, ValidationErrorsFormatter } from '../logger';
+import { logger, WarningFormatter } from '../logger';
 
 // Because all type information is erased in the compiled
 // JavaScript, we can use this clever structural-typing
@@ -27,8 +27,8 @@ export function validate<T>(type: Constructor<T>): express.RequestHandler {
         message: 'Validation error',
         httpMethod: req.method,
         route: req.originalUrl,
-        validationErrors: parseErrors(errors),
-        formatter: ValidationErrorsFormatter,
+        errors: parseErrors(errors),
+        formatter: WarningFormatter,
       });
 
       next(errors);

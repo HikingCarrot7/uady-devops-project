@@ -3,7 +3,9 @@ import express from 'express';
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketService } from '../../services/flight_ticket/flight_ticket.service';
+import { UserNotFoundException } from '../../services/user/user.exceptions';
 import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
+import { RequestWithUserId } from '../types';
 import { FlightTicketRouter } from './flight_ticket.router';
 
 let mockFlightTicketService: MockProxy<FlightTicketService>;
@@ -43,18 +45,18 @@ describe('getUserFlightTickets endpoint', () => {
   });
 
   test("get user flight tickets should return 404 http status code if user doesn't exists", async () => {
-    const userId = '1';
+    const userId = 1;
 
     mockFlightTicketService.getUserFlightTickets.mockImplementation(
       async (userId) => {
-        return Promise.resolve(null as unknown as FlightTicket[]);
+        throw new UserNotFoundException(userId);
       }
     );
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = userId;
+    mockReq.params.id = `${userId}`;
 
     await flightTicketRouter.getUserFlightTickets(mockReq, mockRes);
 
@@ -62,9 +64,7 @@ describe('getUserFlightTickets endpoint', () => {
       1
     );
     expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.json).toHaveBeenCalledWith({
-      error: `No existe el usuario con id: ${userId}`,
-    });
+    expect(mockRes.json).toHaveBeenCalled();
   });
 });
 
@@ -104,53 +104,63 @@ describe('getFlightTicketById endpoint', () => {
 
 describe('createFlightTicket endpoint', () => {
   test('should return 201 http status code when new ticket created', async () => {
+    const userId = 1;
+
     const reqBody = {
-      userId: 1,
       flightId: 1,
       flightClassId: 1,
       passengers: 5,
     };
 
+    const { flightId, flightClassId, ...providedFlightTicket } = reqBody;
+
     mockFlightTicketService.createFlightTicket.mockImplementation(
       (userId, flightId, flightClassId, passengers) => {
         return Promise.resolve({
           id: 10,
-          ...reqBody,
+          ...providedFlightTicket,
         } as unknown as FlightTicket);
       }
     );
 
-    const mockReq = getMockReq();
+    const mockReq: RequestWithUserId = getMockReq();
     const { res: mockRes } = getMockRes();
 
     mockReq.body = reqBody;
+    mockReq.userId = userId;
 
     await flightTicketRouter.createFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.createFlightTicket).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith({ id: 10, ...reqBody });
+    expect(mockRes.json).toHaveBeenCalledWith({
+      id: 10,
+      ...providedFlightTicket,
+    });
   });
 });
 
 describe('updateFlightTicket endpoint', () => {
   test('should return 200 http status code when ticket updated', async () => {
-    const ticketId = '1';
+    const ticketId = 1;
 
     const reqBody = {
+      flightClassId: 1,
       passengers: 10,
     };
 
+    const { flightClassId, ...providedFlightTicket } = reqBody;
+
     mockFlightTicketService.updateFlightTicket.mockImplementation(
-      (ticketId, newFlightTicket) => {
-        return Promise.resolve({} as FlightTicket);
+      (ticketId, flightClassId, providedFlightTicket) => {
+        return Promise.resolve({ id: 1 } as FlightTicket);
       }
     );
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = ticketId;
+    mockReq.params.id = `${ticketId}`;
     mockReq.body = reqBody;
 
     await flightTicketRouter.updateFlightTicket(mockReq, mockRes);
@@ -158,7 +168,8 @@ describe('updateFlightTicket endpoint', () => {
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledTimes(1);
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledWith(
       ticketId,
-      reqBody
+      flightClassId,
+      providedFlightTicket
     );
     expect(mockRes.status).toBeCalledWith(200);
   });
@@ -166,19 +177,19 @@ describe('updateFlightTicket endpoint', () => {
 
 describe('deleteFlightTicket endpoint', () => {
   test('should return 200 http status when ticket deleted', async () => {
-    const ticketId = '1';
+    const ticketId = 1;
 
     mockFlightTicketService.deleteFlightTicket.mockImplementation(
       (ticketId) => {
-        return Promise.resolve({} as FlightTicket);
+        return Promise.resolve({ id: ticketId } as FlightTicket);
       }
     );
 
     const mockReq = getMockReq();
     const { res: mockRes } = getMockRes();
 
-    mockReq.params.id = ticketId;
-  
+    mockReq.params.id = `${ticketId}`;
+
     await flightTicketRouter.deleteFlightTicket(mockReq, mockRes);
 
     expect(mockFlightTicketService.deleteFlightTicket).toHaveBeenCalledTimes(1);

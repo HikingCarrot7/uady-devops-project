@@ -7,46 +7,44 @@ const BaseLog = (info: winston.Logform.TransformableInfo) => {
 };
 
 const BaseRequestLog = (info: winston.Logform.TransformableInfo) => {
-  return `${BaseLog(info)} ${info.httpMethod} | route: ${info.route} |`;
+  return `${BaseLog(info)} ${info.httpMethod} | ROUTE: ${info.route} |`;
 };
 
 export function RequestMethodInfoFormatter(
   this: winston.Logform.TransformableInfo
 ) {
-  return `${BaseRequestLog(this)} query_params: ${JSON.stringify(
+  return `${BaseRequestLog(this)} QUERY_PARAMS: ${JSON.stringify(
     this.queryParams
-  )} | headers: ${JSON.stringify(this.headers)}`;
+  )} | HEADERS: ${JSON.stringify(this.headers)}`;
 }
 
 export function RequestMethodDebugFormatter(
   this: winston.Logform.TransformableInfo
 ) {
-  return `${BaseRequestLog(this)} body: ${JSON.stringify(this.reqBody)}`;
+  return `${BaseRequestLog(this)} BODY: ${JSON.stringify(this.reqBody)}`;
 }
 
 export function RequestMethodParamsDebugFormatter(
   this: winston.Logform.TransformableInfo
 ) {
-  return `${BaseRequestLog(this)} | method_name: ${
-    this.method_name
-  } params: ${JSON.stringify(this.reqParams)}`;
+  return `${BaseRequestLog(this)} | METHOD_NAME: ${
+    this.methodName
+  } | PARAMS: ${JSON.stringify(this.reqParams)}`;
 }
 
 export function QueryDBDebugFormatter(this: winston.Logform.TransformableInfo) {
-  return `${BaseLog(this)} query: ${this.query}`;
+  return `${BaseLog(this)} QUERY: ${this.query}`;
 }
 
 export function ErrorFormatter(this: winston.Logform.TransformableInfo) {
-  return `${BaseRequestLog(this)} status_code: ${this.statusCode} | error: ${
-    this.error
-  }`;
+  return `${BaseRequestLog(this)} STATUS_CODE: ${
+    this.statusCode
+  } | ERROR: ${JSON.stringify(this.error)}`;
 }
 
-export function ValidationErrorsFormatter(
-  this: winston.Logform.TransformableInfo
-) {
-  return `${BaseRequestLog(this)} validation_errors: ${JSON.stringify(
-    this.validationErrors
+export function WarningFormatter(this: winston.Logform.TransformableInfo) {
+  return `${BaseRequestLog(this)} WARNING_ERRORS: ${JSON.stringify(
+    this.error
   )}`;
 }
 
@@ -54,7 +52,7 @@ const logger = winston.createLogger({
   level: 'debug',
   transports: [
     new winston.transports.File({
-      filename: 'api.log',
+      filename: 'logs/api.log',
       maxsize: 100_000_000, // 100 MB
     }),
   ],

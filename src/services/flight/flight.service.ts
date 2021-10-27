@@ -1,38 +1,106 @@
+import { QueryFailedError } from 'typeorm';
 import { Flight } from '../../entities/flight.entity';
+import { Site } from '../../entities/site.entity';
 import { FlightRepository } from '../../repositories/flight.repository';
-import { invalidIdMsg, isNumericId } from '../../utils/validate_id';
+import { SiteService } from '../site/site.service';
+import {
+  FlightNotFoundException,
+  InvalidFlightException,
+  SameTakeOffAndLandingSiteException,
+} from './flight.exceptions';
 
 export class FlightService {
-  constructor(private flightRepository: FlightRepository) {}
+  constructor(
+    private flightRepository: FlightRepository,
+    private siteService: SiteService
+  ) {}
 
-  getAllFlights = async () => {
+  async getAllFlights(): Promise<Flight[]> {
     return await this.flightRepository.find();
-  };
+  }
 
-  getFlightById = async (id: string) => {
-    if (!isNumericId(id)) {
-      return Promise.reject(invalidIdMsg(id));
+  async getFlightById(id: number): Promise<Flight> {
+    const flight = await this.flightRepository.findOne({ id });
+
+    if (!flight) {
+      throw new FlightNotFoundException(id);
     }
 
-    return await this.flightRepository.findOne({ id });
-  };
+    return flight;
+  }
 
-  createFlight = async (flight: Flight) => {
-    return await this.flightRepository.save(flight);
-  };
+  async createFlight(
+    takeOffSiteId: number,
+    landingSiteId: number,
+    providedFlight: Flight
+  ): Promise<Flight> {
+    const takeOffSite = await this.siteService.getSiteById(takeOffSiteId);
+    const landingSite = await this.siteService.getSiteById(landingSiteId);
 
-  updateFlight = async (id: string, newFlight: Flight) => {
-    const result = await this.getFlightById(id);
-    const updatedFlight = { ...result, ...newFlight };
+    providedFlight.takeOffSite = takeOffSite;
+    providedFlight.landingSite = landingSite;
 
-    return await this.flightRepository.save(updatedFlight);
-  };
+    try {
+      return await this.flightRepository.save(providedFlight);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new InvalidFlightException();
+      }
 
-  deleteFlightById = async (id: string) => {
-    if (!isNumericId(id)) {
-      return Promise.reject(invalidIdMsg(id));
+      throw error;
+    }
+  }
+
+  async updateFlight(
+    id: number,
+    takeOffSiteId: number | undefined,
+    landingSiteId: number | undefined,
+    providedFlight: Flight
+  ): Promise<Flight> {
+    let takeOffSite: Site | undefined;
+    let landingSite: Site | undefined;
+
+    const flight = await this.getFlightById(id);
+
+    if (takeOffSiteId) {
+      takeOffSite = await this.siteService.getSiteById(takeOffSiteId);
+      flight.takeOffSite = takeOffSite;
     }
 
-    return await this.flightRepository.delete({ id });
-  };
+    if (landingSiteId) {
+      landingSite = await this.siteService.getSiteById(landingSiteId);
+      flight.landingSite = landingSite;
+    }
+
+    /* Esta validación se debe porque no siempre se puede 
+    proveer el id del vuelo de origen Y el de destino en el request. */
+    if (
+      (takeOffSite && takeOffSite.id === flight.landingSite.id) ||
+      (landingSite && landingSite.id === flight.takeOffSite.id)
+    ) {
+      throw new SameTakeOffAndLandingSiteException();
+    }
+
+    const updatedFlight = new Flight({ ...flight, ...providedFlight });
+
+    try {
+      await this.flightRepository.save(updatedFlight);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new InvalidFlightException();
+      }
+
+      throw error;
+    }
+
+    return await this.getFlightById(id);
+  }
+
+  async deleteFlightById(id: number) {
+    const flight = await this.getFlightById(id);
+
+    await this.flightRepository.delete({ id });
+
+    return flight;
+  }
 }

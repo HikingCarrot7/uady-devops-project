@@ -1,6 +1,5 @@
 import { classToPlain } from 'class-transformer';
 import { Response, Router } from 'express';
-import { MyContext } from '../../middleware/auth.middleware';
 import { Loggable } from '../../middleware/loggable.middleware';
 import {
   EmailAlreadyTakenException,
@@ -9,6 +8,7 @@ import {
 import { UserService } from '../../services/user/user.service';
 import { serializeError } from '../../utils/serialize_error';
 import { validate } from '../../utils/validation';
+import { RequestWithUserId } from '../types';
 import { User } from './../../entities/user.entity';
 import { UpdateUserRequest } from './update_user.request';
 import { UserRequest } from './user.request';
@@ -31,7 +31,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async getAllUsers(req: MyContext, res: Response) {
+    async getAllUsers(req: RequestWithUserId, res: Response) {
       try {
         const users = await userService.getAllUsers();
 
@@ -42,7 +42,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async getUserById(req: MyContext, res: Response) {
+    async getUserById(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
 
       try {
@@ -59,7 +59,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async createUser(req: MyContext, res: Response) {
+    async createUser(req: RequestWithUserId, res: Response) {
       const userRequest = req.body;
 
       try {
@@ -76,10 +76,10 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async updateSelf(req: MyContext, res: Response) {
+    async updateSelf(req: RequestWithUserId, res: Response) {
       if (req.userId) {
         req.params.id = `${req.userId}`;
-        return this.updateUser(req, res);
+        return UserRouterClass.prototype.updateUser(req, res);
       }
 
       // No debería llegar aquí
@@ -87,7 +87,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async updateUser(req: MyContext, res: Response) {
+    async updateUser(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
       const providedUser = req.body;
 
@@ -109,10 +109,10 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async deleteSelf(req: MyContext, res: Response) {
+    async deleteSelf(req: RequestWithUserId, res: Response) {
       if (req.userId) {
         req.params.id = `${req.userId}`;
-        return this.deleteUser(req, res);
+        return UserRouterClass.prototype.deleteUser(req, res);
       }
 
       // No debería llegar aquí
@@ -120,7 +120,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
     }
 
     @Loggable
-    async deleteUser(req: MyContext, res: Response) {
+    async deleteUser(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
 
       try {

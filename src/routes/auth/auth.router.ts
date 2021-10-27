@@ -1,6 +1,5 @@
 import { Response, Router } from 'express';
 import { User } from '../../entities/user.entity';
-import { MyContext } from '../../middleware/auth.middleware';
 import { Loggable } from '../../middleware/loggable.middleware';
 import { AuthService } from '../../services/auth/auth.service';
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../services/user/user.exceptions';
 import { serializeError } from '../../utils/serialize_error';
 import { validate } from '../../utils/validation';
+import { RequestWithUserId } from '../types';
 import { UserRequest } from '../user/user.request';
 import { LoginRequest } from './login.request';
 
@@ -21,7 +21,7 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
     }
 
     @Loggable
-    async login(req: MyContext, res: Response) {
+    async login(req: RequestWithUserId, res: Response) {
       const { email, password } = req.body;
 
       try {
@@ -42,7 +42,7 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
     }
 
     @Loggable
-    async register(req: MyContext, res: Response) {
+    async register(req: RequestWithUserId, res: Response) {
       const providedUser = req.body;
 
       try {

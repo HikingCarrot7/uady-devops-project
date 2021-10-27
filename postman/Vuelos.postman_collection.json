@@ -1,0 +1,945 @@
+{
+	"info": {
+		"_postman_id": "11148d31-e10e-4794-a406-b93b7791a162",
+		"name": "Vuelos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get all users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ0OTk5MjEsImV4cCI6MTYzNDUxNzkyMX0.8EivwKriewZh0uAs55C-3UVkqN4JnXDSsqHj6Ki9wLA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ0OTk5MjEsImV4cCI6MTYzNDUxNzkyMX0.8EivwKriewZh0uAs55C-3UVkqN4JnXDSsqHj6Ki9wLA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nicolás\",\n    \"email\": \"ricardoibarra2050@gmail.com\",\n    \"password\": \"123456Aa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update self",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NzM5OTYsImV4cCI6MTYzNDc5MTk5Nn0.bk1By4h3FS-0I0r9p4szPnLPPptHzwDiDTfQBt22sEU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nicolás Canul Ibarra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQzNDI4NjAsImV4cCI6MTYzNDM2MDg2MH0.I5x2BFXywMnSYRE0WQ0EC43-h1MMKwWvaZxkWJb4LbA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nicolás Canul Ibarra\",\n    \"email\": \"ricardoibarra2045@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/users/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQzNDI4NjAsImV4cCI6MTYzNDM2MDg2MH0.I5x2BFXywMnSYRE0WQ0EC43-h1MMKwWvaZxkWJb4LbA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/2",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete self",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NzM0MTEsImV4cCI6MTYzNDc5MTQxMX0.w1JL_flfc9EG_JGv_vjVAAC_9F1i9haAS50XosXEDmQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flight tickets",
+			"item": [
+				{
+					"name": "Get my flight tickets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/me/flight-tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me",
+								"flight-tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight tickets from user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/users/2/flight-tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"flight-tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight ticket by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flight-ticket/3",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flight-ticket",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create flight ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flightId\": 8,\n    \"flightClassId\": 1,\n    \"passengers\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/flight-ticket",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flight-ticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update flight ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flightClassId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/flight-ticket/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flight-ticket",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flight-ticket/3",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flight-ticket",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ricardoibarra2044@gmail.com\",\n    \"password\": \"123456Aa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nicolás\",\n    \"email\": \"ricardoibarra2044@gmail.com\",\n    \"password\": \"123456Aa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flight",
+			"item": [
+				{
+					"name": "Get all flights",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create flight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4Mzc4NzYsImV4cCI6MTYzNDg1NTg3Nn0.7M3fVbuMtS5YpNp-mhi3A1go8WSGEtR1d-YJib503is",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2021-10-15\",\n    \"hour\": \"10:35\",\n    \"estimatedHours\": 8,\n    \"takeOffSiteId\": 1,\n    \"landingSiteId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/flights",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete flight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights/7",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update flight",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"landingSiteId\": 1,\n    \"takeOffSiteId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/flights/8",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Site",
+			"item": [
+				{
+					"name": "Get all sites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/sites",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"sites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get site by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ3NTgzOTMsImV4cCI6MTYzNDc3NjM5M30.4JvmOLD0kGdi08uLgdVFyFYze_c3P1p3s2SM6rzvf4Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/sites/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"sites",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create site",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ0MzA1NjAsImV4cCI6MTYzNDQ0ODU2MH0.v1PqvaFhFsb0jfDgP6aRlxH2zBVnu89aqt6xNcQSruA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"countryId\": 1,\n    \"state\": \"Yucatán\",\n    \"city\": \"Kanasín\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/sites",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"sites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update site",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ0MzA1NjAsImV4cCI6MTYzNDQ0ODU2MH0.v1PqvaFhFsb0jfDgP6aRlxH2zBVnu89aqt6xNcQSruA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city\": \"Valladolid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/v1/sites/3",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"sites",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete site",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ0MzA1NjAsImV4cCI6MTYzNDQ0ODU2MH0.v1PqvaFhFsb0jfDgP6aRlxH2zBVnu89aqt6xNcQSruA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/sites/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"sites",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flight classes",
+			"item": [
+				{
+					"name": "Get all flight classes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights-classes",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights-classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get flight class by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJyaWNhcmRvaWJhcnJhMjA0NEBnbWFpbC5jb20iLCJpYXQiOjE2MzQ4NjM0NjgsImV4cCI6MTYzNDg4MTQ2OH0.9QmVuCVoqLuyksA0FyN1HI9XejfOOp8cnnLGC21hdCQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/v1/flights-classes/1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"flights-classes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
