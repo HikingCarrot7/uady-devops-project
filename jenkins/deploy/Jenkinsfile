@@ -1,0 +1,15 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                sh "docker build -t devops-vuelos-" + env.GIT_BRANCH + ":1.0.0-" + env.BUILD_NUMBER + " ."
+                sh "docker ps | grep devops-vuelos-" + env.GIT_BRANCH + " | awk '{print \$1}' | xargs docker stop &>/dev/null || :"
+                sh "docker run -d --network host -p 5000:5000 devops-vuelos-" + env.GIT_BRANCH + ":1.0.0-" + env.BUILD_NUMBER
+
+                echo 'App deployed!'
+            }
+        }
+    }
+}
