@@ -25,9 +25,9 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
       const { email, password } = req.body;
 
       try {
-        const token = await authService.login(email, password);
+        const { username, token } = await authService.login(email, password);
 
-        return res.status(200).json({ token });
+        return res.status(200).json({ username, token });
       } catch (error) {
         if (error instanceof UserNotRegisteredException) {
           return res.status(404).json(serializeError(error.message));
@@ -53,6 +53,8 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
         if (error instanceof EmailAlreadyTakenException) {
           return res.status(409).json(serializeError(error.message));
         }
+
+        console.log(error);
 
         return res.status(500).json(serializeError(error));
       }

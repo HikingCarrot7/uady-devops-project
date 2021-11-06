@@ -15,7 +15,7 @@ export class AuthService {
     password: string,
     // Para propósitos de prueba.
     compareFunction?: (password: string, hashedPassword: string) => boolean
-  ): Promise<string> {
+  ) {
     const user = await this.userService.getUserByEmail(email);
 
     if (!user) {
@@ -24,14 +24,20 @@ export class AuthService {
 
     if (compareFunction) {
       if (compareFunction(password, user.password)) {
-        return this.createToken(user.id, email);
+        return {
+          username: user.username,
+          token: this.createToken(user.id, email),
+        };
       }
 
       throw new InvalidPasswordException();
     }
 
     if (await bcrypt.compare(password, user.password)) {
-      return this.createToken(user.id, email);
+      return {
+        username: user.username,
+        token: this.createToken(user.id, email),
+      };
     }
 
     throw new InvalidPasswordException();

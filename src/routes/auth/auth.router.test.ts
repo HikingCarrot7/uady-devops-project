@@ -25,9 +25,10 @@ afterEach(() => {
 describe('login endpoint', () => {
   test('should return 200 http status code when successful login', async () => {
     const token = 'a valid token';
+    const username = 'HikingCarrot7';
 
     mockAuthService.login.mockImplementation((email, password) =>
-      Promise.resolve(token)
+      Promise.resolve({ username, token })
     );
 
     const mockReq = getMockReq();
@@ -37,7 +38,10 @@ describe('login endpoint', () => {
 
     expect(mockAuthService.login).toBeCalledTimes(1);
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({ token: token });
+    expect(mockRes.json).toHaveBeenCalledWith({
+      username: username,
+      token: token,
+    });
   });
 
   test('should return 404 http status code when user is not registered', async () => {

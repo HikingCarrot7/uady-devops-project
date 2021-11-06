@@ -31,7 +31,7 @@ describe('getUserById method', () => {
     const userId = 1;
     const user = {
       id: 1,
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
@@ -49,7 +49,7 @@ describe('getUserById method', () => {
     const userId = 'invalidId';
     const user = {
       id: 1,
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
@@ -65,7 +65,7 @@ describe('getUserById method', () => {
 describe('createUser method', () => {
   test('create a new user should work', async () => {
     const providedUser = {
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
@@ -85,19 +85,19 @@ describe('createUser method', () => {
 describe('UpdateUser method', () => {
   test('update user should work', async () => {
     const providedUser = {
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
 
     const fetchedUser = {
-      name: 'User2',
+      username: 'User2',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
 
     const savedUser = {
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
@@ -118,7 +118,7 @@ describe('deleteUser method', () => {
   test('delete user', async () => {
     const user = {
       id: 1,
-      name: 'User1',
+      username: 'User1',
       email: 'user1@gmail.com',
       password: 'user1password',
     } as User;
