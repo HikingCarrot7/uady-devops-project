@@ -52,7 +52,7 @@ describe('getUserById endpoint', () => {
 
     const user = {
       id: parseInt(userId),
-      name: 'User1',
+      username: 'User1',
       email: 'user@gmail.com',
       password: 'password',
     };
@@ -84,7 +84,7 @@ describe('getUserById endpoint', () => {
 
     const user = {
       id: parseInt(userId),
-      name: 'User1',
+      username: 'User1',
       email: 'user@gmail.com',
       password: 'password',
     };
@@ -150,14 +150,14 @@ describe('updateUser endpoint', () => {
 
     const originalUser = {
       id: userId,
-      name: 'User1',
+      username: 'User1',
       email: 'user@gmail.com',
       password: 'password',
     };
 
     const updatedUser = {
       id: userId,
-      name: 'User1',
+      username: 'User1',
       email: 'newmail@gmail.com',
       password: 'password',
     };

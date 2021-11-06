@@ -29,7 +29,7 @@ describe('login method', () => {
       return Promise.resolve({
         id: 1,
         email: 'test@test.com',
-        name: 'Nicolás',
+        username: 'Nicolás',
       } as User);
     });
 
@@ -53,7 +53,7 @@ describe('login method', () => {
       return Promise.resolve({
         id: 1,
         email: 'test@test.com',
-        name: 'Nicolás',
+        username: 'Nicolás',
       } as User);
     });
 
@@ -77,7 +77,7 @@ describe('login method', () => {
 describe('register method', () => {
   test('register a new user', async () => {
     const providedUser = {
-      name: 'Nicolás',
+      username: 'Nicolás',
       email: 'test@test.com',
       password: '123456',
     };

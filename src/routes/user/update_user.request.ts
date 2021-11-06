@@ -3,7 +3,7 @@ import { UserRequest } from './user.request';
 
 export class UpdateUserRequest extends UserRequest {
   @IsOptional()
-  name: string;
+  username: string;
 
   @IsOptional()
   email: string;
