@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { Loggable } from '../../middleware/loggable.middleware';
 import {
   CountryNotFoundException,
+  InvalidSiteException,
   SiteNotFoundException,
 } from '../../services/site/site.exceptions';
 import { SiteService } from '../../services/site/site.service';
@@ -56,11 +57,11 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
 
     @Loggable
     async createSite(req: Request, res: Response) {
-      const { countryId, ...siteRequest } = req.body;
+      const { country, ...siteRequest } = req.body;
 
       try {
         const newSite = await siteService.createSite(
-          countryId,
+          country,
           new Site(siteRequest)
         );
 
@@ -68,6 +69,10 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       } catch (error) {
         if (error instanceof CountryNotFoundException) {
           return res.status(404).json(serializeError(error.message));
+        }
+
+        if (error instanceof InvalidSiteException) {
+          return res.status(400).json(serializeError(error.message));
         }
 
         return res.status(500).json(serializeError(error));
