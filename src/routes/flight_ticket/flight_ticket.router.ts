@@ -113,11 +113,14 @@ export const FlightTicketRouter = (
     @Loggable
     async updateFlightTicket(req: Request, res: Response) {
       const ticketId = parseInt(req.params.id);
-      const { flightClassId, ...providedFlightTicket } = req.body;
+      const { userId, flightId, flightClassId, ...providedFlightTicket } =
+        req.body;
 
       try {
         const updatedTicket = await flightTicketService.updateFlightTicket(
           ticketId,
+          userId,
+          flightId,
           flightClassId,
           providedFlightTicket
         );
@@ -126,7 +129,8 @@ export const FlightTicketRouter = (
       } catch (error) {
         if (
           error instanceof FlightTicketNotFoundException ||
-          FlightClassNotFoundException
+          FlightClassNotFoundException ||
+          FlightNotFoundException
         ) {
           return res.status(404).json(serializeError(error.message));
         }

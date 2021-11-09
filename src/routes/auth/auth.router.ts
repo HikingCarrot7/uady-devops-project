@@ -25,9 +25,12 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
       const { email, password } = req.body;
 
       try {
-        const { username, token } = await authService.login(email, password);
+        const { username, token, id } = await authService.login(
+          email,
+          password
+        );
 
-        return res.status(200).json({ username, token });
+        return res.status(200).json({ id, username, token });
       } catch (error) {
         if (error instanceof UserNotRegisteredException) {
           return res.status(404).json(serializeError(error.message));

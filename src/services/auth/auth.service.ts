@@ -25,6 +25,7 @@ export class AuthService {
     if (compareFunction) {
       if (compareFunction(password, user.password)) {
         return {
+          id: user.id,
           username: user.username,
           token: this.createToken(user.id, email),
         };
@@ -35,6 +36,7 @@ export class AuthService {
 
     if (await bcrypt.compare(password, user.password)) {
       return {
+        id: user.id,
         username: user.username,
         token: this.createToken(user.id, email),
       };
