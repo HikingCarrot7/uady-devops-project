@@ -6,7 +6,6 @@ import { FlightTicketNotFoundException } from '../../routes/flight_ticket/flight
 import { FlightService } from '../flight/flight.service';
 import { FlightClassService } from '../flight_class/flight_class.service';
 import { UserService } from '../user/user.service';
-import { InmutableFieldException } from './flight_ticket.exceptions';
 
 export class FlightTicketService {
   constructor(
@@ -27,7 +26,6 @@ export class FlightTicketService {
   async getFlightTicketById(tickedId: number): Promise<FlightTicket> {
     const flightTicket = await this.flightTicketRepo.findOne({
       where: { id: tickedId },
-      loadRelationIds: true,
     });
 
     if (!flightTicket) {
@@ -80,11 +78,6 @@ export class FlightTicketService {
     }
 
     const flightTicket = await this.getFlightTicketById(ticketId);
-
-    // Para que un usuario no pueda cambiar el ID del vuelo de un ticket que no le pertenece...
-    if (userId !== Number(flightTicket.user)) {
-      throw new InmutableFieldException();
-    }
 
     if (flight) {
       flightTicket.flight = flight;
