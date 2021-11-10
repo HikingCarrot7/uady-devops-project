@@ -6,5 +6,5 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   database: 'devops_vuelos',
   entities: ['dist/entities/**/*.js'],
-  synchronize: true,
+  synchronize: false,
 };
