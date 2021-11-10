@@ -26,9 +26,10 @@ describe('login endpoint', () => {
   test('should return 200 http status code when successful login', async () => {
     const token = 'a valid token';
     const username = 'HikingCarrot7';
+    const id = 1;
 
     mockAuthService.login.mockImplementation((email, password) =>
-      Promise.resolve({ username, token })
+      Promise.resolve({ id, username, token })
     );
 
     const mockReq = getMockReq();

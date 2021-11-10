@@ -9,6 +9,12 @@ export class SiteNotFoundException extends Error {
   }
 }
 
+export class InvalidSiteException extends Error {
+  constructor(msg = 'Ya existe un sitio con ese estado la ciudad!') {
+    super(msg);
+  }
+}
+
 export class SiteAlreadyExistsException extends Error {
   constructor(msg = 'Ya existe un sitio con esos datos!') {
     super(msg);

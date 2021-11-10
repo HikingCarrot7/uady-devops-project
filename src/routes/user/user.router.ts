@@ -77,13 +77,10 @@ export const UserRouter = (router: Router, userService: UserService) => {
 
     @Loggable
     async updateSelf(req: RequestWithUserId, res: Response) {
-      if (req.userId) {
-        req.params.id = `${req.userId}`;
-        return UserRouterClass.prototype.updateUser(req, res);
-      }
+      const userId = req.userId!!;
+      req.params.id = `${userId}`;
 
-      // No debería llegar aquí
-      return res.sendStatus(400);
+      return UserRouterClass.prototype.updateUser(req, res);
     }
 
     @Loggable
@@ -110,13 +107,10 @@ export const UserRouter = (router: Router, userService: UserService) => {
 
     @Loggable
     async deleteSelf(req: RequestWithUserId, res: Response) {
-      if (req.userId) {
-        req.params.id = `${req.userId}`;
-        return UserRouterClass.prototype.deleteUser(req, res);
-      }
+      const userId = req.userId!!;
+      req.params.id = `${userId}`;
 
-      // No debería llegar aquí
-      return res.sendStatus(400);
+      return UserRouterClass.prototype.deleteUser(req, res);
     }
 
     @Loggable

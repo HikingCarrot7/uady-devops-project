@@ -54,8 +54,6 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
           return res.status(409).json(serializeError(error.message));
         }
 
-        console.log(error);
-
         return res.status(500).json(serializeError(error));
       }
     }

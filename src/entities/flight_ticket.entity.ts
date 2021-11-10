@@ -14,7 +14,9 @@ export class FlightTicket extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User, (user) => user.tickets, { onDelete: 'CASCADE' })
+  @ManyToOne((type) => User, (user) => user.tickets, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @ManyToOne((type) => Flight, (flight) => flight.tickets, {

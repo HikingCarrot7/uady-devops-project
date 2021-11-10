@@ -1,8 +1,10 @@
+import { QueryFailedError } from 'typeorm';
 import { Site } from '../../entities/site.entity';
 import { CountryRepository } from '../../repositories/country.repository';
 import { SiteRepository } from '../../repositories/site.repository';
 import {
   CountryNotFoundException,
+  InvalidSiteException,
   SiteNotFoundException,
 } from './site.exceptions';
 
@@ -35,7 +37,15 @@ export class SiteService {
 
     providedSite.country = country;
 
-    return await this.siteRepository.save(providedSite);
+    try {
+      return await this.siteRepository.save(providedSite);
+    } catch (err) {
+      if (err instanceof QueryFailedError) {
+        throw new InvalidSiteException();
+      }
+
+      throw err;
+    }
   }
 
   async updateSite(

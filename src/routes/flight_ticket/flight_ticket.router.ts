@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { Loggable } from '../../middleware/loggable.middleware';
 import { FlightNotFoundException } from '../../services/flight/flight.exceptions';
 import { FlightClassNotFoundException } from '../../services/flight_class/flight_class.exeptions';
+import { InmutableFieldException } from '../../services/flight_ticket/flight_ticket.exceptions';
 import { FlightTicketService } from '../../services/flight_ticket/flight_ticket.service';
 import { UserNotFoundException } from '../../services/user/user.exceptions';
 import { serializeError } from '../../utils/serialize_error';
@@ -33,13 +34,10 @@ export const FlightTicketRouter = (
 
     @Loggable
     async getMyFlightTickets(req: RequestWithUserId, res: Response) {
-      if (req.userId) {
-        req.params.id = `${req.userId}`;
-        return FlightTicketClass.prototype.getUserFlightTickets(req, res);
-      }
+      const userId = req.userId!!;
+      req.params.id = `${userId}`;
 
-      // No debería llegar aquí
-      return res.sendStatus(400);
+      return FlightTicketClass.prototype.getUserFlightTickets(req, res);
     }
 
     @Loggable
@@ -80,12 +78,7 @@ export const FlightTicketRouter = (
 
     @Loggable
     async createFlightTicket(req: RequestWithUserId, res: Response) {
-      // No debería entrar aquí...
-      if (!req.userId) {
-        return res.sendStatus(400);
-      }
-
-      const userId = req.userId;
+      const userId = req.userId!!;
       const { flightId, flightClassId, ...providedFlightTicket } = req.body;
 
       try {
@@ -111,22 +104,30 @@ export const FlightTicketRouter = (
     }
 
     @Loggable
-    async updateFlightTicket(req: Request, res: Response) {
+    async updateFlightTicket(req: RequestWithUserId, res: Response) {
       const ticketId = parseInt(req.params.id);
-      const { flightClassId, ...providedFlightTicket } = req.body;
+      const userId = req.userId!!;
+      const { flightId, flightClassId, ...providedFlightTicket } = req.body;
 
       try {
         const updatedTicket = await flightTicketService.updateFlightTicket(
           ticketId,
+          userId,
+          flightId,
           flightClassId,
           providedFlightTicket
         );
 
         return res.status(200).json(updatedTicket);
       } catch (error) {
+        if (error instanceof InmutableFieldException) {
+          return res.status(403).json(serializeError(error.message));
+        }
+
         if (
           error instanceof FlightTicketNotFoundException ||
-          FlightClassNotFoundException
+          FlightClassNotFoundException ||
+          FlightNotFoundException
         ) {
           return res.status(404).json(serializeError(error.message));
         }

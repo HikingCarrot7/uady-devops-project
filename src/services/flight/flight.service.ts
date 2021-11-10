@@ -53,12 +53,12 @@ export class FlightService {
 
   async updateFlight(
     id: number,
-    takeOffSiteId: number | undefined,
-    landingSiteId: number | undefined,
+    takeOffSiteId: UndefinedOr<number>,
+    landingSiteId: UndefinedOr<number>,
     providedFlight: Flight
   ): Promise<Flight> {
-    let takeOffSite: Site | undefined;
-    let landingSite: Site | undefined;
+    let takeOffSite: UndefinedOr<Site>;
+    let landingSite: UndefinedOr<Site>;
 
     const flight = await this.getFlightById(id);
 

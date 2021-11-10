@@ -1,6 +1,7 @@
-import { IsPositive, Max } from 'class-validator';
+import { IsNotEmpty, IsPositive, Max } from 'class-validator';
 
 export class FlightTicketRequest {
+  @IsNotEmpty({ message: 'Se debe especificar el id del vuelo.' })
   @IsPositive({ message: 'El id del vuelo debe ser mayor a 0.' })
   flightId: number = 0;
 

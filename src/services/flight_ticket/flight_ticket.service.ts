@@ -1,3 +1,4 @@
+import { Flight } from '../../entities/flight.entity';
 import { FlightClass } from '../../entities/flight_class.entity';
 import { FlightTicket } from '../../entities/flight_ticket.entity';
 import { FlightTicketRepository } from '../../repositories/flight_ticket.repository';
@@ -23,7 +24,9 @@ export class FlightTicketService {
   }
 
   async getFlightTicketById(tickedId: number): Promise<FlightTicket> {
-    const flightTicket = await this.flightTicketRepo.findOne({ id: tickedId });
+    const flightTicket = await this.flightTicketRepo.findOne({
+      where: { id: tickedId },
+    });
 
     if (!flightTicket) {
       throw new FlightTicketNotFoundException(tickedId);
@@ -56,10 +59,17 @@ export class FlightTicketService {
 
   async updateFlightTicket(
     ticketId: number,
-    flightClassId: number | undefined,
+    userId: UndefinedOr<number>,
+    flightId: UndefinedOr<number>,
+    flightClassId: UndefinedOr<number>,
     providedFlightTicket: FlightTicket
   ): Promise<FlightTicket> {
-    let flightClass: FlightClass | undefined;
+    let flightClass: UndefinedOr<FlightClass>;
+    let flight: UndefinedOr<Flight>;
+
+    if (flightId) {
+      flight = await this.flightService.getFlightById(flightId);
+    }
 
     if (flightClassId) {
       flightClass = await this.flightClassService.getFlightClassById(
@@ -68,6 +78,10 @@ export class FlightTicketService {
     }
 
     const flightTicket = await this.getFlightTicketById(ticketId);
+
+    if (flight) {
+      flightTicket.flight = flight;
+    }
 
     if (flightClass) {
       flightTicket.flightClass = flightClass;

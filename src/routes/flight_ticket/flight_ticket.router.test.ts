@@ -168,6 +168,8 @@ describe('updateFlightTicket endpoint', () => {
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledTimes(1);
     expect(mockFlightTicketService.updateFlightTicket).toHaveBeenCalledWith(
       ticketId,
+      undefined,
+      undefined,
       flightClassId,
       providedFlightTicket
     );
