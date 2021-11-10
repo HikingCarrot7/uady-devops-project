@@ -78,19 +78,18 @@ describe('getFlightTicketById method', () => {
       passengers: 5,
     } as FlightTicket;
 
-    mockFlightTicketsRepository.find.mockReturnValueOnce(
-      Promise.resolve([ticket])
+    mockFlightTicketsRepository.findOne.mockReturnValueOnce(
+      Promise.resolve(ticket)
     );
 
     await flightTicketService.getFlightTicketById(ticketId);
 
-    expect(mockFlightTicketsRepository.find).toHaveBeenCalledWith({
-      loadRelationIds: true,
+    expect(mockFlightTicketsRepository.findOne).toHaveBeenCalledWith({
       where: {
         id: ticketId,
       },
     });
-    expect(mockFlightTicketsRepository.find).toHaveReturned();
+    expect(mockFlightTicketsRepository.findOne).toHaveReturned();
   });
 });
 
@@ -129,8 +128,8 @@ describe('createFlightTicket method', () => {
       Promise.resolve(newTicket)
     );
 
-    mockFlightTicketsRepository.find.mockReturnValueOnce(
-      Promise.resolve([newTicket])
+    mockFlightTicketsRepository.findOne.mockReturnValueOnce(
+      Promise.resolve(newTicket)
     );
 
     await flightTicketService.createFlightTicket(
@@ -187,14 +186,13 @@ describe('deleteFlightTicket method', () => {
       passengers: 5,
     } as FlightTicket;
 
-    mockFlightTicketsRepository.find.mockReturnValueOnce(
-      Promise.resolve([ticket])
+    mockFlightTicketsRepository.findOne.mockReturnValueOnce(
+      Promise.resolve(ticket)
     );
 
     await flightTicketService.deleteFlightTicket(ticket.id);
 
-    expect(mockFlightTicketsRepository.find).toBeCalledWith({
-      loadRelationIds: true,
+    expect(mockFlightTicketsRepository.findOne).toBeCalledWith({
       where: {
         id: 1,
       },
