@@ -104,10 +104,10 @@ CREATE TABLE `flight_tickets` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sities`
+-- Table structure for table `sites`
 --
 
-CREATE TABLE `sities` (
+CREATE TABLE `sites` (
   `id` int(11) NOT NULL,
   `city` varchar(50) NOT NULL,
   `state` varchar(50) NOT NULL,
@@ -115,10 +115,10 @@ CREATE TABLE `sities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `sities`
+-- Dumping data for table `sites`
 --
 
-INSERT INTO `sities` (`id`, `city`, `state`, `countryId`) VALUES
+INSERT INTO `sites` (`id`, `city`, `state`, `countryId`) VALUES
 (1, 'Mérida', 'Yucatán', 1),
 (2, 'Valladolid', 'Yucatán', 1),
 (3, 'Caucel', 'Yucatán', 1),
@@ -176,9 +176,9 @@ ALTER TABLE `flight_tickets`
   ADD KEY `FK_19df51b4a8846e79b3b12c864a4` (`flightClassId`);
 
 --
--- Indexes for table `sities`
+-- Indexes for table `sites`
 --
-ALTER TABLE `sities`
+ALTER TABLE `sites`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `IDX_350d1215c3ad06a9eb76f9117b` (`city`,`state`),
   ADD KEY `FK_7eee898e38204d09bb60b6bc741` (`countryId`);
@@ -219,9 +219,9 @@ ALTER TABLE `flight_tickets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `sities`
+-- AUTO_INCREMENT for table `sites`
 --
-ALTER TABLE `sities`
+ALTER TABLE `sites`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
@@ -238,8 +238,8 @@ ALTER TABLE `users`
 -- Constraints for table `flights`
 --
 ALTER TABLE `flights`
-  ADD CONSTRAINT `FK_989d7af5119d03fc41ba5cec090` FOREIGN KEY (`takeOffSiteId`) REFERENCES `sities` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_f2835ca09d1032e16d27f6314f9` FOREIGN KEY (`landingSiteId`) REFERENCES `sities` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_989d7af5119d03fc41ba5cec090` FOREIGN KEY (`takeOffSiteId`) REFERENCES `sites` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_f2835ca09d1032e16d27f6314f9` FOREIGN KEY (`landingSiteId`) REFERENCES `sites` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `flight_tickets`
@@ -250,9 +250,9 @@ ALTER TABLE `flight_tickets`
   ADD CONSTRAINT `FK_a240577c5de82bfc7451e87c6b8` FOREIGN KEY (`flightId`) REFERENCES `flights` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
--- Constraints for table `sities`
+-- Constraints for table `sites`
 --
-ALTER TABLE `sities`
+ALTER TABLE `sites`
   ADD CONSTRAINT `FK_7eee898e38204d09bb60b6bc741` FOREIGN KEY (`countryId`) REFERENCES `countries` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 

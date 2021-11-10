@@ -5,7 +5,6 @@ import { FlightTicketRepository } from '../../repositories/flight_ticket.reposit
 import { FlightTicketNotFoundException } from '../../routes/flight_ticket/flight_ticket.exceptions';
 import { FlightService } from '../flight/flight.service';
 import { FlightClassService } from '../flight_class/flight_class.service';
-import { InvalidPasswordException } from '../user/user.exceptions';
 import { UserService } from '../user/user.service';
 import { InmutableFieldException } from './flight_ticket.exceptions';
 
@@ -26,16 +25,16 @@ export class FlightTicketService {
   }
 
   async getFlightTicketById(tickedId: number): Promise<FlightTicket> {
-    const flightTicket = await this.flightTicketRepo.find({
+    const flightTicket = await this.flightTicketRepo.findOne({
       where: { id: tickedId },
       loadRelationIds: true,
     });
 
-    if (!flightTicket[0]) {
+    if (!flightTicket) {
       throw new FlightTicketNotFoundException(tickedId);
     }
 
-    return flightTicket[0];
+    return flightTicket;
   }
 
   async createFlightTicket(
@@ -62,13 +61,13 @@ export class FlightTicketService {
 
   async updateFlightTicket(
     ticketId: number,
-    userId: number | undefined,
-    flightId: number | undefined,
-    flightClassId: number | undefined,
+    userId: UndefinedOr<number>,
+    flightId: UndefinedOr<number>,
+    flightClassId: UndefinedOr<number>,
     providedFlightTicket: FlightTicket
   ): Promise<FlightTicket> {
-    let flightClass: FlightClass | undefined;
-    let flight: Flight | undefined;
+    let flightClass: UndefinedOr<FlightClass>;
+    let flight: UndefinedOr<Flight>;
 
     if (flightId) {
       flight = await this.flightService.getFlightById(flightId);
@@ -82,8 +81,13 @@ export class FlightTicketService {
 
     const flightTicket = await this.getFlightTicketById(ticketId);
 
-    if (userId != Number(flightTicket.user)) {
+    // Para que un usuario no pueda cambiar el ID del vuelo de un ticket que no le pertenece...
+    if (userId !== Number(flightTicket.user)) {
       throw new InmutableFieldException();
+    }
+
+    if (flight) {
+      flightTicket.flight = flight;
     }
 
     if (flightClass) {

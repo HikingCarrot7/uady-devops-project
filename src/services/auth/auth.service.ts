@@ -22,11 +22,12 @@ export class AuthService {
       throw new UserNotRegisteredException();
     }
 
+    const { username } = user;
+
     if (compareFunction) {
       if (compareFunction(password, user.password)) {
         return {
-          id: user.id,
-          username: user.username,
+          username,
           token: this.createToken(user.id, email),
         };
       }
@@ -36,8 +37,7 @@ export class AuthService {
 
     if (await bcrypt.compare(password, user.password)) {
       return {
-        id: user.id,
-        username: user.username,
+        username,
         token: this.createToken(user.id, email),
       };
     }
@@ -59,7 +59,7 @@ export class AuthService {
 
   private createToken(userId: number, email: string): string {
     return jwt.sign({ id: userId, email }, process.env.TOKEN_KEY!, {
-      expiresIn: '5h',
+      expiresIn: process.env.TOKEN_EXPIRES_IN,
     });
   }
 }

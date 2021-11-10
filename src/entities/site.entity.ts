@@ -10,7 +10,7 @@ import {
 import { Country } from './country.entity';
 import { Flight } from './flight.entity';
 
-@Entity({ name: 'sities' })
+@Entity({ name: 'sites' })
 @Unique(['city', 'state'])
 export class Site extends BaseEntity {
   @PrimaryGeneratedColumn()
