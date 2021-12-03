@@ -30,7 +30,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
         .delete(this.deleteUser);
     }
 
-    @Loggable
+    @Loggable()
     async getAllUsers(req: RequestWithUserId, res: Response) {
       try {
         const users = await userService.getAllUsers();
@@ -41,7 +41,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async getUserById(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
 
@@ -58,7 +58,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async createUser(req: RequestWithUserId, res: Response) {
       const userRequest = req.body;
 
@@ -75,7 +75,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async updateSelf(req: RequestWithUserId, res: Response) {
       const userId = req.userId!!;
       req.params.id = `${userId}`;
@@ -83,7 +83,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       return UserRouterClass.prototype.updateUser(req, res);
     }
 
-    @Loggable
+    @Loggable()
     async updateUser(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
       const providedUser = req.body;
@@ -105,7 +105,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async deleteSelf(req: RequestWithUserId, res: Response) {
       const userId = req.userId!!;
       req.params.id = `${userId}`;
@@ -113,7 +113,7 @@ export const UserRouter = (router: Router, userService: UserService) => {
       return UserRouterClass.prototype.deleteUser(req, res);
     }
 
-    @Loggable
+    @Loggable()
     async deleteUser(req: RequestWithUserId, res: Response) {
       const userId = parseInt(req.params.id);
 

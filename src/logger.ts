@@ -1,5 +1,16 @@
 import winston from 'winston';
 
+export interface Log {
+  level: string;
+  message: string;
+  httpMethod: string;
+  methodName: string;
+  route: string;
+  statusCode: number;
+  errors: any;
+  formatter: any;
+}
+
 const BaseLog = (info: winston.Logform.TransformableInfo) => {
   return `[${info.timestamp}] [${info.level.toUpperCase()}] [${
     info.message
@@ -44,7 +55,7 @@ export function ErrorFormatter(this: winston.Logform.TransformableInfo) {
 
 export function WarningFormatter(this: winston.Logform.TransformableInfo) {
   return `${BaseRequestLog(this)} WARNING_ERRORS: ${JSON.stringify(
-    this.error
+    this.errors
   )}`;
 }
 

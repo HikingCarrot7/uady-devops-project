@@ -32,7 +32,7 @@ export const FlightTicketRouter = (
       router.route('/users/:id/flight-tickets').get(this.getUserFlightTickets);
     }
 
-    @Loggable
+    @Loggable()
     async getMyFlightTickets(req: RequestWithUserId, res: Response) {
       const userId = req.userId!!;
       req.params.id = `${userId}`;
@@ -40,7 +40,7 @@ export const FlightTicketRouter = (
       return FlightTicketClass.prototype.getUserFlightTickets(req, res);
     }
 
-    @Loggable
+    @Loggable()
     async getUserFlightTickets(req: Request, res: Response) {
       const userId = parseInt(req.params.id);
 
@@ -59,7 +59,7 @@ export const FlightTicketRouter = (
       }
     }
 
-    @Loggable
+    @Loggable()
     async getFlightTicketById(req: Request, res: Response) {
       const ticketId = parseInt(req.params.id);
 
@@ -76,7 +76,7 @@ export const FlightTicketRouter = (
       }
     }
 
-    @Loggable
+    @Loggable()
     async createFlightTicket(req: RequestWithUserId, res: Response) {
       const userId = req.userId!!;
       const { flightId, flightClassId, ...providedFlightTicket } = req.body;
@@ -103,7 +103,7 @@ export const FlightTicketRouter = (
       }
     }
 
-    @Loggable
+    @Loggable()
     async updateFlightTicket(req: RequestWithUserId, res: Response) {
       const ticketId = parseInt(req.params.id);
       const userId = req.userId!!;
@@ -136,7 +136,7 @@ export const FlightTicketRouter = (
       }
     }
 
-    @Loggable
+    @Loggable()
     async deleteFlightTicket(req: Request, res: Response) {
       const ticketId = parseInt(req.params.id);
 

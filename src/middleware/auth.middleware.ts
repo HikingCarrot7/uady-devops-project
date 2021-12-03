@@ -1,14 +1,30 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { Log, logger, WarningFormatter } from '../logger';
 import { RequestWithUserId } from '../routes/types';
 import { UserNotFoundException } from '../services/user/user.exceptions';
 import { UserService } from '../services/user/user.service';
 import { serializeError } from '../utils/serialize_error';
-import { Loggable } from './loggable.middleware';
+
+const logWarning = ({
+  httpMethod,
+  route,
+  statusCode = 401,
+  errors,
+}: Partial<Log>) => {
+  logger.log({
+    level: 'warn',
+    message: `Warning in method: authenticateJWT`,
+    httpMethod,
+    route,
+    statusCode,
+    errors,
+    formatter: WarningFormatter,
+  });
+};
 
 export const JWTAuthenticator = (userService: UserService) => {
   class JWTAuthenticatorClass {
-    @Loggable
     async authenticateJWT(
       req: RequestWithUserId,
       res: Response,
@@ -20,9 +36,18 @@ export const JWTAuthenticator = (userService: UserService) => {
         const token = authHeader.split(' ')[1];
 
         if (!token) {
-          return res
-            .status(403)
-            .json(serializeError('Se requiere un token válido para el acceso'));
+          const errors = serializeError(
+            'Se requiere un token válido para el acceso'
+          );
+
+          logWarning({
+            httpMethod: req.method,
+            route: req.originalUrl,
+            statusCode: 403,
+            errors,
+          });
+
+          return res.status(403).json(errors);
         }
 
         try {
@@ -32,15 +57,40 @@ export const JWTAuthenticator = (userService: UserService) => {
           req.userId = user.id;
         } catch (error) {
           if (error instanceof UserNotFoundException) {
-            return res.status(404).json(serializeError(error.message));
+            const errors = serializeError(error.message);
+
+            logWarning({
+              httpMethod: req.method,
+              route: req.originalUrl,
+              statusCode: 404,
+              errors,
+            });
+
+            return res.status(404).json(errors);
           }
 
-          return res.status(401).json(serializeError('El token es inválido'));
+          const errors = serializeError('El token es inválido');
+
+          logWarning({
+            httpMethod: req.method,
+            route: req.originalUrl,
+            errors,
+          });
+
+          return res.status(401).json(errors);
         }
 
         return next();
       } else {
-        res.status(401).json(serializeError('No tienes permisos para acceder'));
+        const errors = serializeError('No tienes permisos para acceder');
+
+        logWarning({
+          httpMethod: req.method,
+          route: req.originalUrl,
+          errors,
+        });
+
+        res.status(401).json(errors);
       }
     }
   }

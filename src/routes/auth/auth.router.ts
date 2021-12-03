@@ -20,7 +20,7 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
       router.route('/register').post(validate(UserRequest), this.register);
     }
 
-    @Loggable
+    @Loggable()
     async login(req: RequestWithUserId, res: Response) {
       const { email, password } = req.body;
 
@@ -41,7 +41,7 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async register(req: RequestWithUserId, res: Response) {
       const providedUser = req.body;
 

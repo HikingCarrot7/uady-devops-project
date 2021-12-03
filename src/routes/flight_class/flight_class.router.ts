@@ -14,7 +14,7 @@ export const FlightClassRouter = (
       router.route('/flights-classes/:id').get(this.getFlightClassById);
     }
 
-    @Loggable
+    @Loggable()
     async getAllFlightsClasses(req: Request, res: Response) {
       try {
         const flightClasses = await flightClassService.getAllFlightsClasses();
@@ -25,7 +25,7 @@ export const FlightClassRouter = (
       }
     }
 
-    @Loggable
+    @Loggable()
     async getFlightClassById(req: Request, res: Response) {
       const flightClassId = parseInt(req.params.id);
 

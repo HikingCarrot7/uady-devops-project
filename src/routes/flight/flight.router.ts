@@ -28,7 +28,7 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
         .put(validate(UpdateFlightRequest), this.updateFlight);
     }
 
-    @Loggable
+    @Loggable()
     async getAllFlights(req: Request, res: Response) {
       try {
         const flights = await flightService.getAllFlights();
@@ -39,7 +39,7 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async getFlightById(req: Request, res: Response) {
       const flightId = parseInt(req.params.id);
 
@@ -56,7 +56,7 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async createFlight(req: Request, res: Response) {
       const { takeOffSiteId, landingSiteId, ...flightRequest } = req.body;
 
@@ -81,7 +81,7 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async updateFlight(req: Request, res: Response) {
       const flightId = parseInt(req.params.id);
       const { takeOffSiteId, landingSiteId, ...providedFlight } = req.body;
@@ -111,7 +111,7 @@ export const FlightRouter = (router: Router, flightService: FlightService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async deleteFlightById(req: Request, res: Response) {
       const flightId = parseInt(req.params.id);
 

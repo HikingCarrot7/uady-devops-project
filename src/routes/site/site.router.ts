@@ -27,7 +27,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
         .put(validate(UpdateSiteRequest), this.updateSite);
     }
 
-    @Loggable
+    @Loggable()
     async getAllSites(req: Request, res: Response) {
       try {
         const sites = await siteService.getAllSites();
@@ -38,7 +38,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async getSiteById(req: Request, res: Response) {
       const siteId = parseInt(req.params.id);
 
@@ -55,7 +55,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async createSite(req: Request, res: Response) {
       const { country, ...siteRequest } = req.body;
 
@@ -79,7 +79,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async updateSite(req: Request, res: Response) {
       const siteId = parseInt(req.params.id);
       const { countryId, ...providedSite } = req.body;
@@ -104,7 +104,7 @@ export const SiteRouter = (router: Router, siteService: SiteService) => {
       }
     }
 
-    @Loggable
+    @Loggable()
     async deleteSite(req: Request, res: Response) {
       const siteId = parseInt(req.params.id);
 
