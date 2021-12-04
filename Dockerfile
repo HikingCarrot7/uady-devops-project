@@ -1,10 +1,16 @@
-# Set the base image to "node" with tag "14".
 # This image has node already configured.
-FROM node:14
+FROM docker.elastic.co/logstash/logstash:7.15.2
+
+# A VERY BAD practice, but it works... (for now)
+# All the file system contents are copied over (using multi-stage builds)
+COPY --from=node:14 / /
+
+# Set root user, to prevent any permission denied error.
+USER root
 
 # Set the working directory for any subsequent RUN, CMD, COPY
 # and other commands. If the dir does not exist, create it.
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy files from the local file system into the container's
 # filesystem, in the path specified. Since WORKDIR points to
@@ -12,14 +18,19 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Install npm dependencies and build app.
-RUN npm install
+RUN npm install --production
 RUN npm run build
 
-# Port 8080 is inteded to be exposed. This line is for doc
+# Port 5000 is inteded to be exposed. This line is for doc
 # purposes. To actually expose the port, use the option -p
 # when running «docker container run».
-EXPOSE 8080
+EXPOSE 5000
 
-# Only one CMD should exist per Dockerfile. It sets the defaults
-# of how an executing container is executed.
-CMD [ "npm", "run", "start" ]
+RUN rm -f /usr/share/logstash/pipeline/logstash.conf
+
+RUN rm -f /usr/share/logstash/config/logstash.yml
+
+ADD logstash/ /usr/share/logstash/pipeline/
+
+ENTRYPOINT logstash & \
+    npm run start
