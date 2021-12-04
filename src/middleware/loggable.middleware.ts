@@ -4,10 +4,8 @@ import {
   logger,
   RequestMethodDebugFormatter,
   RequestMethodInfoFormatter,
-  RequestMethodParamsDebugFormatter,
   WarningFormatter,
 } from '../logger';
-import { isObjectEmpty } from '../utils/is_object_empty';
 
 export const Loggable = () => {
   return function (
@@ -43,30 +41,17 @@ export const Loggable = () => {
         ...baseLogInfo,
       });
 
-      // DEBUG - Request con parámetros y nombre de método.
-      if (!isObjectEmpty(req.params)) {
-        logger.log({
-          level: 'debug',
-          message: `Request to method: ${propertyKey}`,
-          reqParams: req.params,
-          methodName: propertyKey,
-          formatter: RequestMethodParamsDebugFormatter,
-          ...baseLogInfo,
-        });
-      }
+      const { password, ...restBody } = req.body;
 
-      // DEBUG - Request con body.
-      if (!isObjectEmpty(req.body)) {
-        const { password, ...restBody } = req.body;
-
-        logger.log({
-          level: 'debug',
-          message: `Request to method: ${propertyKey}`,
-          reqBody: restBody,
-          formatter: RequestMethodDebugFormatter,
-          ...baseLogInfo,
-        });
-      }
+      // DEBUG - Request con parámetros y body.
+      logger.log({
+        level: 'debug',
+        message: `Request to method: ${propertyKey}`,
+        reqParams: req.params,
+        reqBody: restBody,
+        formatter: RequestMethodDebugFormatter,
+        ...baseLogInfo,
+      });
 
       const originalJsonMethod = res.json;
 
