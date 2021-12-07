@@ -1,12 +1,13 @@
 # This image has node already configured.
 FROM docker.elastic.co/logstash/logstash:7.15.2
 
-# A VERY BAD practice, but it works... (for now)
-# All the file system contents are copied over (using multi-stage builds)
-COPY --from=node:14 / /
-
 # Set root user, to prevent any permission denied error.
 USER root
+
+# Install nodejs
+RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash -
+
+RUN yum -y install nodejs
 
 # Set the working directory for any subsequent RUN, CMD, COPY
 # and other commands. If the dir does not exist, create it.
@@ -19,13 +20,14 @@ COPY . .
 
 # Install npm dependencies and build app.
 RUN npm install --production
-RUN npm run build
+# RUN npm run build
 
 # Port 5000 is inteded to be exposed. This line is for doc
 # purposes. To actually expose the port, use the option -p
 # when running «docker container run».
 EXPOSE 5000
 
+# Logstash config
 RUN rm -f /usr/share/logstash/pipeline/logstash.conf
 
 RUN rm -f /usr/share/logstash/config/logstash.yml
