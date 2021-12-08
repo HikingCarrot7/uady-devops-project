@@ -19,8 +19,8 @@ WORKDIR /app
 COPY . .
 
 # Install npm dependencies and build app.
-RUN npm install --production
-# RUN npm run build
+RUN npm install
+RUN npm run build
 
 # Port 5000 is inteded to be exposed. This line is for doc
 # purposes. To actually expose the port, use the option -p
