@@ -18,6 +18,7 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
     constructor() {
       router.route('/login').post(validate(LoginRequest), this.login);
       router.route('/register').post(validate(UserRequest), this.register);
+      router.route('/health').get(this.health);
     }
 
     @Loggable()
@@ -56,6 +57,10 @@ export const AuthRouter = (router: Router, authService: AuthService) => {
 
         return res.status(500).json(serializeError(error));
       }
+    }
+
+    async health(req: any, res: Response) {
+      return res.status(200).json({ status: 'Ok' });
     }
   }
 

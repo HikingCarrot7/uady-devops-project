@@ -11,14 +11,18 @@ export interface Log {
   formatter: any;
 }
 
+const SEPARATOR = '|';
+
 const BaseLog = (info: winston.Logform.TransformableInfo) => {
   return `[${info.timestamp}] [${info.level.toUpperCase()}] [${
     info.message
-  }] |`;
+  }] ${SEPARATOR}`;
 };
 
 const BaseRequestLog = (info: winston.Logform.TransformableInfo) => {
-  return `${BaseLog(info)} ${info.httpMethod} | ROUTE: ${info.route} |`;
+  return `${BaseLog(info)} ${info.httpMethod} ${SEPARATOR} ROUTE: ${
+    info.route
+  } ${SEPARATOR}`;
 };
 
 export function RequestMethodInfoFormatter(
@@ -26,21 +30,15 @@ export function RequestMethodInfoFormatter(
 ) {
   return `${BaseRequestLog(this)} QUERY_PARAMS: ${JSON.stringify(
     this.queryParams
-  )} | HEADERS: ${JSON.stringify(this.headers)}`;
+  )} ${SEPARATOR} HEADERS: ${JSON.stringify(this.headers)}`;
 }
 
 export function RequestMethodDebugFormatter(
   this: winston.Logform.TransformableInfo
 ) {
-  return `${BaseRequestLog(this)} BODY: ${JSON.stringify(this.reqBody)}`;
-}
-
-export function RequestMethodParamsDebugFormatter(
-  this: winston.Logform.TransformableInfo
-) {
-  return `${BaseRequestLog(this)} | METHOD_NAME: ${
-    this.methodName
-  } | PARAMS: ${JSON.stringify(this.reqParams)}`;
+  return `${BaseRequestLog(this)} PARAMS: ${JSON.stringify(
+    this.reqParams
+  )} ${SEPARATOR} BODY: ${JSON.stringify(this.reqBody)}`;
 }
 
 export function QueryDBDebugFormatter(this: winston.Logform.TransformableInfo) {
@@ -50,7 +48,7 @@ export function QueryDBDebugFormatter(this: winston.Logform.TransformableInfo) {
 export function ErrorFormatter(this: winston.Logform.TransformableInfo) {
   return `${BaseRequestLog(this)} STATUS_CODE: ${
     this.statusCode
-  } | ERROR: ${JSON.stringify(this.error)}`;
+  } ${SEPARATOR} ERROR: ${JSON.stringify(this.error)}`;
 }
 
 export function WarningFormatter(this: winston.Logform.TransformableInfo) {
